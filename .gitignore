@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+Public_School_Characteristics_-_Current.geojson
+.DS_Store
