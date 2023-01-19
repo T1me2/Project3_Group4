@@ -1,11 +1,11 @@
-Flask
-Gunicorn
-MarkupSafe
 certifi
 Click
+Flask
 Flask-SQLAlchemy
+Gunicorn
 itsdangerous
-jinja2
+Jinja2
+MarkupSafe
 numpy
 pandas
 psycopg2
