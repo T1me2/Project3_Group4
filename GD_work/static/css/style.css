@@ -21,6 +21,8 @@ html {
   position: relative;
   height: inherit;
   width: inherit;
+  border-style: solid;
+  border-width: 10px;
 }
 
 #map {
