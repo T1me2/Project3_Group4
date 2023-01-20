@@ -17,8 +17,14 @@ html {
     width: 600px;
 }
 
+#map-frame {
+  position: relative;
+  height: inherit;
+  width: inherit;
+}
+
 #map {
-    position: relative;
-    height: inherit;
-    width: inherit;
+  position: relative;
+  height: inherit;
+  width: inherit;
 }
