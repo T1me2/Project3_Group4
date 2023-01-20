@@ -27,9 +27,33 @@
   </head>
 
   <body>
-    <div>
+    <div class="container" style="position: relative;">
+      <div class="row">
+        <div class="col-md-12 jumbotron text-center">
+          <h1>Walkability and School Density</h1>
+          <p>Use the interactive charts below to explore the dataset.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="map-container">
+            <div id="map"></div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div id="bar"></div>
+        </div>
+        <div class="col-md-5">
+          <div id="gauge"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="bubble"></div>
+        </div>
+      </div>
     </div>
-    <div id="map">sdfs</div>
+    
 
     <!-- Leaflet heatmap plugin-->
     <script type="text/javascript" src="static/js/leaflet-heat.js"></script>
