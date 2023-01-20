@@ -139,10 +139,13 @@ function createMap(locations, newLayer) {
     blur:10
   });
 
+  let toner = new L.StamenTileLayer("toner-lite");
+
   // Create base and overlay maps
   let baseMaps = {
     "Street": street,
-    "Watercolor": watercolor
+    "Watercolor": watercolor,
+    "Toner": toner
     }
   
   let overlayMaps = {
