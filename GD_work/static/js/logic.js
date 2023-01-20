@@ -215,7 +215,7 @@ function createMap(locations, newLayer) {
         click: e => {
           myMap.fitBounds(e.target.getBounds());
         }
-      }).bindPopup(`${feature.properties.NAME} County}`);
+      }).bindPopup(`${feature.properties.NAME} County`);
     }
   })
   ;
@@ -238,7 +238,7 @@ function createMap(locations, newLayer) {
   let myMap = L.map("map", {
     center: [40.2659, -96.7467],
     zoom: 3,
-    layers: [street, newLayer]
+    layers: [street, newLayer, stateLayer]
     });
     
     // Add layer control
