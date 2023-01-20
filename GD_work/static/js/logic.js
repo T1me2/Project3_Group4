@@ -150,6 +150,8 @@ function createMap(locations, newLayer) {
     "Heat Map": heat
   }
 
+  
+
   // Create the map object
   let myMap = L.map("map", {
     center: [40.2659, -96.7467],
