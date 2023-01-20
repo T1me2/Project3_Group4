@@ -179,6 +179,8 @@ function createHeatMap(locations) {
     attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
   });
 
+  let toner = new L.StamenTileLayer("toner-lite");
+
   let heat = L.heatLayer(locations, {
     radius:30,
     blur:35
@@ -187,7 +189,8 @@ function createHeatMap(locations) {
   // Create base and overlay maps
   let baseMaps = {
     "Street": street,
-    "Topographic Map": topo
+    "Topographic Map": topo,
+    "Toner": toner
     }
 
   let overlayMaps = {
