@@ -116,8 +116,6 @@ while (currentLength === 2000) {
 
     // If so, create the map from the marker cluster group
     createMap(schoolLocations, markers);
-    // Heat map (redundant)
-    // createHeatMap(schoolLocations)
 
     // Exit while loop
     break;
@@ -128,39 +126,38 @@ while (currentLength === 2000) {
 // Function to create map (cluster marker AND heat layers), taking in location array, marker cluster group as arguments
 function createMap(locations, newLayer) {
 
-  // Define the street and topo tile layers
+  // Define the street and toner tile layers
   let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  })
-
-  let watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
-    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    subdomains: 'abcd',
-    minZoom: 1,
-    maxZoom: 16,
-    ext: 'jpg'
   });
 
   let toner = new L.StamenTileLayer("toner-lite");
 
+  // Layers
   let heat = L.heatLayer(locations, {
     radius:30,
     blur:10
   });
 
+  // States Layer
+  let stateLayer = L.geoJson(statesData);
+
+  // Counties Layer
+  let countyLayer = L.geoJson(countiesData);
+
   // Create base and overlay maps
   let baseMaps = {
     "Street": street,
-    "Watercolor": watercolor,
     Toner: toner
     }
-  
+
+
   let overlayMaps = {
     "School Markers": newLayer,
-    "Heat Map": heat
+    "Heat Map": heat,
+    States: stateLayer,
+    Counties: countyLayer
   }
-
-  
 
   // Create the map object
   let myMap = L.map("map", {
