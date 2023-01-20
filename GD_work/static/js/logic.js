@@ -3,8 +3,10 @@ const idURL = "https://nces.ed.gov/opengis/rest/services/K12_School_Locations/ED
 
 // Define base URL for API call
 const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
+
 // Define initial query (all data)
 let query = `query?where=OBJECTID>0&outFields=*&outSR=4326&f=geojson`
+
 // Define GeoJSON url (may not be necessary)
 const geojsonUrl = "https://data-nces.opendata.arcgis.com/datasets/nces::public-school-characteristics-current-1.geojson?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D"
 
@@ -16,8 +18,6 @@ d3.json(idURL).then(response => {
   numberOfSchools.push(response.objectIds.length)
   console.log("School count", numberOfSchools);
 });
-
-
 
 // Create icons for school markers
 let schoolIcon = L.icon({
@@ -52,23 +52,30 @@ let stateNames = [ 'AL', 'AK', 'AS', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', '
                   'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VI', 'VA', 
                     'WA', 'WV', 'WI', 'WY' ];
 
+let currentLength = 2000;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Loop to make repeated API calls (2000 at a time) until all data is collected
-while (firstIndex < 100455) {
-
-  console.log(firstIndex);
+// while (firstIndex < 100455) {
+while (currentLength === 2000) {
 
   // Update the query string to get next 2000 data points
-  query = `query?where=OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`
+  // query = `query?where=OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`
+  
 
   // New state query where specific state can be selected???
   let stateName = 'MN';
-  let stateQuery = `query?where=LSTATE% = '${stateName}' AND OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
+  let stateQuery = `query?where=LSTATE%20%3D%20'${stateName}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
+      
+  d3.json(url+stateQuery).then(response => {
 
-  // API Call to url
-  d3.json(url+query).then(response => {
+    // Update currentLength of API call to see if there 
+    currentLength = response.features.length;
+    
+    // console.log(currentLength);
+    // console.log("response",response);
 
     // From https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates?answertab=votes#tab-top
     // Filter array to unique schools
@@ -85,8 +92,8 @@ while (firstIndex < 100455) {
                             },
                             mouseout: e => 
                               e.target.setIcon(schoolIcon)
-                          }).bindPopup(`<h2>${element.attributes.SCH_NAME}</h2><hr>
-                                      <h3>${element.attributes.LCITY}, ${element.attributes.LSTATE}</h3>
+                          }).bindPopup(`<h3>${element.attributes.SCH_NAME}</h3><hr>
+                                      <h5>${element.attributes.LCITY}, ${element.attributes.LSTATE}</h5>
                                       <p>Level: ${element.attributes.SCHOOL_LEVEL}<br>
                                       Student Population: ${element.attributes.TOTAL}<br>
                                       Total Free/Reduced Lunch: ${element.attributes.TOTFRL}<br>
@@ -96,7 +103,7 @@ while (firstIndex < 100455) {
       // Add coordinates to schoolLocations for heat map                
       schoolLocations.push([element.geometry.y, element.geometry.x]);
     });
-    console.log("length", schoolLocations.length);
+    // console.log("length", schoolLocations.length);
   });
   // End API call
 
