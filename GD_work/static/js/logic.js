@@ -140,7 +140,29 @@ function createMap(locations, newLayer) {
   });
 
   // States Layer
-  let stateLayer = L.geoJson(statesData);
+  let stateLayer = L.geoJson(statesData, {
+    style: {
+      fillColor: 'rgb(153,216,201)',
+      weight: 2,
+      opacity: 1,
+      color: 'white',
+      dashArray: '3',
+      fillOpacity: 0.7
+    }
+  }).on({
+    mouseover: e => {
+      let layer = e.target
+      layer.setStyle({
+        weight: 5,
+        color: "white",
+        dashArray: '',
+        fillOpacity: 0.7
+      })
+      layer.bringToFront()
+    }
+    
+  })
+  ;
 
   // Counties Layer
   let countyLayer = L.geoJson(countiesData);
