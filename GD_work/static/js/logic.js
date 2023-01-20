@@ -62,14 +62,14 @@ let currentLength = 2000;
 while (currentLength === 2000) {
 
   // Update the query string to get next 2000 data points
-  // query = `query?where=OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`
+  query = `query?where=OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`
   
 
   // New state query where specific state can be selected???
   let stateName = 'MN';
   let stateQuery = `query?where=LSTATE%20%3D%20'${stateName}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
       
-  d3.json(url+stateQuery).then(response => {
+  d3.json(url+query).then(response => {
 
     // Update currentLength of API call to see if there 
     currentLength = response.features.length;
@@ -148,19 +148,35 @@ function createMap(locations, newLayer) {
       color: 'white',
       dashArray: '3',
       fillOpacity: 0.7
-    }
-  }).on({
-    mouseover: e => {
-      let layer = e.target
-      layer.setStyle({
-        weight: 5,
-        color: "white",
-        dashArray: '',
-        fillOpacity: 0.7
+    },
+    onEachFeature: (feature,layer) => {
+      layer.on({
+        mouseover: e => {
+          let layer = e.target
+          layer.setStyle({
+            weight: 5,
+            color: "white",
+            dashArray: '',
+            fillOpacity: 0.7
+          })
+          layer.bringToFront()
+        },
+        mouseout: e => {
+          e.target.setStyle({
+            fillColor: 'rgb(153,216,201)',
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+          })
+        },
+        click: e => {
+          myMap.fitBounds(e.target.getBounds());
+        }
       })
-      layer.bringToFront()
     }
-    
+
   })
   ;
 
