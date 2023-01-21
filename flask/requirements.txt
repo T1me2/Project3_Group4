@@ -2,7 +2,7 @@ certifi
 Click
 Flask
 Flask-SQLAlchemy
-Flask-jsonify
+json
 Gunicorn
 itsdangerous
 Jinja2
