@@ -14,7 +14,7 @@ client = pymongo.MongoClient(conn)
 
 #select db and collection to use
 db = client.get_database('project3_data')
-collection = db.data
+user_collection = pymongo.collection.Collection(db, 'user_collection')
 
 
 #create routes
