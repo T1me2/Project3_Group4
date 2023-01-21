@@ -21,9 +21,10 @@ collection = db.data
 @app.route("/api/v1.0/project3/group4/data")
 def group_data():
     """Return what we need to be json"""
-    data = list(collection.find())
+    collection.find()
+    
 
-    return render_template("/", data=data)
+
 
 @app.route("/")
 def welcome ():
