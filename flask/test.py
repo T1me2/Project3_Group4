@@ -13,15 +13,16 @@ conn = "mongodb+srv://project3_group4:project3_group4@cluster0.a6d7ysg.mongodb.n
 client = pymongo.MongoClient(conn)
 
 #select db and collection to use
-db = client.get_database('project3_data')
-user_collection = pymongo.collection.Collection(db, 'user_collection')
+db = client.project3_group4
+collection = db.data
 
 
 #create routes
 @app.route("/api/v1.0/project3/group4/data")
 def group_data():
     """Return what we need to be json"""
-    collection.find()
+    results = list(collection.find())
+    return jsonify(results)
     
     
 
