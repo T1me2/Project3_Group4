@@ -1,27 +1,29 @@
 #import Flask
 from flask import Flask, jsonify
-
-# Dictionary of Justice League (using class example to setup on render)
-
-justice_league_members = [
-    {"superhero": "Aquaman", "real_name": "Arthur Curry"},
-    {"superhero": "Batman", "real_name": "Bruce Wayne"},
-    {"superhero": "Cyborg", "real_name": "Victor Stone"},
-    {"superhero": "Flash", "real_name": "Barry Allen"},
-    {"superhero": "Green Lantern", "real_name": "Hal Jordan"},
-    {"superhero": "Superman", "real_name": "Clark Kent/Kal-El"},
-    {"superhero": "Wonder Woman", "real_name": "Princess Diana"}
-]
+import pymongo 
+import json
+import pandas as pd
+from pymongo import MongoClient
 
 #create app
 app = Flask(__name__)
+
+#set up mongo atlas database connection
+conn = "mongodb+srv://project3_group4:project3_group4@cluster0.a6d7ysg.mongodb.net/?retryWrites=true&w=majority"
+client = pymongo.MongoClient(conn)
+
+#select db and collection to use
+db = client.project3_data
+collection = db.data
+
 
 #create routes
 @app.route("/api/v1.0/project3/group4/data")
 def group_data():
     """Return what we need to be json"""
+    data = list(collection.find())
 
-    return jsonify(justice_league_members)
+    return render_template("/", data=data)
 
 @app.route("/")
 def welcome ():
