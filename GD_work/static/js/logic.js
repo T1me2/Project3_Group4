@@ -16,8 +16,10 @@ let numberOfSchools = [];
 // Get count of all schools in database (can only get it to work when pushed it to array)
 d3.json(idURL).then(response => {
   numberOfSchools.push(response.objectIds.length)
-  console.log("School count", numberOfSchools);
+  
 });
+
+console.log("School count", numberOfSchools);
 
 // Create icons for school markers
 let schoolIcon = L.icon({
@@ -46,11 +48,18 @@ let schoolLocations = [];
 let markers = L.markerClusterGroup();
 
 // Create array of state abbreviations 
-let stateNames = [ 'AL', 'AK', 'AS', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FM', 'FL', 'GA', 'GU', 'HI', 
-                  'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MH', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 
-                  'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'MP', 'OH', 'OK', 'OR', 'PW', 'PA',
-                  'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VI', 'VA', 
-                    'WA', 'WV', 'WI', 'WY' ];
+let stateNames = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'GA', 'HI', 
+                  'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 
+                  'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA',
+                  'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
+
+let stateDict = {'AL':'01', 'AK':'02', 'AZ':'04', 'AR':'05', 'CA':'06', 'CO':'08', 'CT':'09', 'DE':'10', 
+                  'DC':'11', 'FL':'12', 'GA':'13', 'HI':'15', 'ID':'16', 'IL':'17', 'IN':'18', 'IA':'19', 
+                  'KS':'20', 'KY':'21', 'LA':'22', 'ME':'23', 'MD':'24', 'MA':'25', 'MI':'26', 'MN':'27', 
+                  'MS':'28', 'MO':'20', 'MT':'30', 'NE':'31', 'NV':'32', 'NH':'33', 'NJ':'34', 'NM':'35', 
+                  'NY':'36', 'NC':'37', 'ND':'38', 'OH':'39', 'OK':'40', 'OR':'41', 'PA':'42', 'PR':'72', 
+                  'RI':'44', 'SC':'45', 'SD':'46', 'TN':'47', 'TX':'48', 'UT':'49', 'VT':'50', 'VA':'51', 
+                  'WA':'53', 'WV':'54', 'WI':'55:', 'WY':'56'};
 
 let currentLength = 2000;
 
@@ -124,7 +133,7 @@ while (currentLength === 2000) {
 
 
 // Function to create map (cluster marker AND heat layers), taking in location array, marker cluster group as arguments
-function createMap(locations, newLayer) {
+function createMap(locations, markersLayer) {
 
   // Define the street and toner tile layers
   let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -190,7 +199,7 @@ function createMap(locations, newLayer) {
       fillOpacity: 0.7
     },
     onEachFeature: (feature,layer) => {
-      console.log(feature);
+      // console.log(feature);
       layer.on({
         mouseover: e => {
           let layer = e.target
@@ -222,13 +231,12 @@ function createMap(locations, newLayer) {
 
   // Create base and overlay maps
   let baseMaps = {
-    "Street": street,
     Toner: toner
     }
 
 
   let overlayMaps = {
-    "School Markers": newLayer,
+    "School Markers": markersLayer,
     "Heat Map": heat,
     States: stateLayer,
     Counties: countyLayer
@@ -238,7 +246,7 @@ function createMap(locations, newLayer) {
   let myMap = L.map("map", {
     center: [40.2659, -96.7467],
     zoom: 3,
-    layers: [street, newLayer, stateLayer]
+    layers: [street, markersLayer, stateLayer]
     });
     
     // Add layer control
@@ -246,3 +254,27 @@ function createMap(locations, newLayer) {
     collapsed: false
     }).addTo(myMap);
 }
+
+
+///// Create function to initialize dashboard and create dropdown menu
+function createDropdownMenu() {
+    // Loop through sample data to add sample IDs to dropdown menu
+    for (i=0; i<stateNames.length; i++) {
+      // Select the dropdown menu element using D3
+      let dropDownMenu = d3.select("#selDataset");
+      // Add new "option" element for every sample in dataset
+      let newOption = dropDownMenu.append("option");
+      // Set text in each option to the sample ID
+      newOption.text(stateNames[i]);
+    }
+};
+
+// ///// Create function to update page based on changes in dropdown menu
+// function optionChanged(state = stateNames[0]) {
+//   // Update charts to data for selected sample ID
+//   createCharts(sampleID);
+//   // Updata demographic info panel for selected sample ID
+//   getMetadata(sampleID);
+// }
+
+createDropdownMenu();
