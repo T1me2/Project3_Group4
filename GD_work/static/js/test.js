@@ -1,4 +1,11 @@
-
+let stateDict = {'01':'AL', '02':'AK', '04':'AZ', '05':'AR', '06':'CA', '08':'CO', '09':'CT', '10':'DE', 
+                '11':'DC', '12':'FL', '13':'GA', '15':'HI', '16':'ID', '17':'IL', '18':'IN', '19':'IA', 
+                '20':'KS', '21':'KY', '22':'LA', '23':'ME','24':'MD', '25':'MA', '26':'MI', '27':'MN', 
+                '28':'MS', '20':'MO', '30':'MT', '31':'NE', '32':'NV', '33':'NH', '34':'NJ', '35':'NM', 
+                '36':'NY', '37':'NC', '38':'ND', '39':'OH', '40':'OK', '41':'OR', '42':'PA', '72':'PR', 
+                '44':'RI', '45':'SC', '46':'SD', '47':'TN', '48':'TX', '49':'UT', '50':'VT', '51':'VA', 
+                '53':'WA', '54':'WV', '55':'WI', '56':'WY'
+};
 
 // Define the street and toner tile layers
 let toner = new L.StamenTileLayer("toner-lite");
@@ -37,55 +44,59 @@ let stateLayer = L.geoJson(statesData, {
             },
             click: e => {
                 myMap.fitBounds(e.target.getBounds());
+                // Identify current state
+                let selectedStateId = feature.id;
+                // Retrieve current state ID number from dictionary
+                let selectedStateAbb = stateDict[feature.id]
 
-                let selectedState = feature.id;
-                console.log("ID", feature.id);
-                // Create markers for that state
+                console.log("ID", selectedStateAbb);
+                // Create markers for selected state
+                showSchoolMarkers(selectedStateAbb)
             }
         });
     }
 });
 
 // Counties Layer
-let countyLayer = L.geoJson(countiesData, {
-    style: {
-        fillColor: 'rgb(229,245,249)',
-        weight: 2,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.7
-    },
-    onEachFeature: (feature,layer) => {
-        // console.log(feature);
-        layer.on({
-        mouseover: e => {
-            let layer = e.target
-            layer.setStyle({
-            weight: 5,
-            color: "white",
-            dashArray: '',
-            fillOpacity: 0.7
-            })
-            layer.bringToFront()
-        },
-        mouseout: e => {
-            e.target.setStyle({
-            fillColor: 'rgb(229,245,249)',
-            weight: 2,
-            opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: 0.7
-            })
-        },
-        click: e => {
-            myMap.fitBounds(e.target.getBounds());
-            createSchoolMarkers
-        }
-        }).bindPopup(`${feature.properties.NAME} County`);
-    }
-});
+// let countyLayer = L.geoJson(countiesData, {
+//     style: {
+//         fillColor: 'rgb(229,245,249)',
+//         weight: 2,
+//         opacity: 1,
+//         color: 'white',
+//         dashArray: '3',
+//         fillOpacity: 0.7
+//     },
+//     onEachFeature: (feature,layer) => {
+//         // console.log(feature);
+//         layer.on({
+//         mouseover: e => {
+//             let layer = e.target
+//             layer.setStyle({
+//             weight: 5,
+//             color: "white",
+//             dashArray: '',
+//             fillOpacity: 0.7
+//             })
+//             layer.bringToFront()
+//         },
+//         mouseout: e => {
+//             e.target.setStyle({
+//             fillColor: 'rgb(229,245,249)',
+//             weight: 2,
+//             opacity: 1,
+//             color: 'white',
+//             dashArray: '3',
+//             fillOpacity: 0.7
+//             })
+//         },
+//         click: e => {
+//             myMap.fitBounds(e.target.getBounds());
+//             createSchoolMarkers
+//         }
+//         }).bindPopup(`${feature.properties.NAME} County`);
+//     }
+// });
 
 // Create base and overlay maps
 let baseMaps = {
