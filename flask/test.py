@@ -23,7 +23,7 @@ def group_data():
     """Return what we need to be json"""
     results = collection.find()
     for result in results:
-        return result
+        return jsonify(result)
     
     
 
