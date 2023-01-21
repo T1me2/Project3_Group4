@@ -21,9 +21,12 @@ collection = db.data
 @app.route("/api/v1.0/project3/group4/data")
 def group_data():
     """Return what we need to be json"""
+    result_list = []
     results = collection.find()
     for result in results:
-        return jsonify(result)
+        result_list.append(result)
+    
+    return jsonify(result_list)
     
     
 
