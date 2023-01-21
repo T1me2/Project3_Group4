@@ -17,4 +17,4 @@ Werkzeug
 wincertstore
 pymongo
 json
-pymongo-mongoClient
+pymongo-MongoClient
