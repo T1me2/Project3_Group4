@@ -13,7 +13,7 @@ conn = "mongodb+srv://project3_group4:project3_group4@cluster0.a6d7ysg.mongodb.n
 client = pymongo.MongoClient(conn)
 
 #select db and collection to use
-db = client.project3_data
+db = client.get_database('project3_data')
 collection = db.data
 
 
