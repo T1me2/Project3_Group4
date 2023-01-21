@@ -16,5 +16,4 @@ SQLAlchemy
 Werkzeug
 wincertstore
 pymongo
-json
 pymongo-MongoClient
