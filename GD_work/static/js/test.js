@@ -38,6 +38,9 @@ let stateLayer = L.geoJson(statesData, {
             click: e => {
                 myMap.fitBounds(e.target.getBounds());
 
+                let selectedState = feature.id;
+                console.log("ID", feature.id);
+                // Create markers for that state
             }
         });
     }
@@ -78,6 +81,7 @@ let countyLayer = L.geoJson(countiesData, {
         },
         click: e => {
             myMap.fitBounds(e.target.getBounds());
+            createSchoolMarkers
         }
         }).bindPopup(`${feature.properties.NAME} County`);
     }
@@ -108,14 +112,14 @@ L.control.layers(baseMaps, overlayMaps, {
 }).addTo(myMap);
 
 
-function updateMap(markerLayer) {
+function updateMap(existingMap, markerLayer) {
     markerLayer.addTo(myMap);
 }
 
 
 
 
-function createSchoolMakers(schoolJson) {
+function createSchoolMarkers(schoolJson, existingMap) {
     // Create icons for school markers
     let schoolIcon = L.icon({
         iconUrl: 'education.png',
@@ -156,10 +160,10 @@ function createSchoolMakers(schoolJson) {
                                     % Free/Reduced Lunch: ${((element.attributes.TOTFRL/element.attributes.TOTAL)*100).toFixed(2)}%</p>`
             ));
 
-    // Add coordinates to schoolLocations for heat map                
+            // Add coordinates to schoolLocations for heat map                
             schoolLocations.push([element.geometry.y, element.geometry.x]);
 
-            createMap(schoolLocations, markers)
+            updateMap(myMap, schoolLocations, markers)
     });
 }
 
