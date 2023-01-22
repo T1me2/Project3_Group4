@@ -16,40 +16,39 @@ let stateNames = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'G
 // Define the street and toner tile layers
 let toner = new L.StamenTileLayer("toner-lite");
 
-function stateStyle(feature) {
-  return {
-    fillColor: 'rgb(153,216,201)',
-    weight: 2,
-    opacity: 1,
-    color: 'gray',
-    dashArray: '3',
-    fillOpacity: 0.7
-    }
-}
+let stateStyle = {
+                  fillColor: 'rgb(260,252,185)',
+                  weight: 2,
+                  opacity: 1,
+                  color: 'gray',
+                  dashArray: '3',
+                  fillOpacity: 0.7
+                  };
 
-function stateHighlightStyle(e) {
-  let layer = e.target;
+let stateHighlightStyle = {
+                            fillColor: 'rgb(153,216,201)',
+                            weight: 5,
+                            color: "gray",
+                            dashArray: '',
+                            fillOpacity: 0.7
+                          };
 
-  layer.setStyle({
-    weight: 5,
-    color: "white",
-    dashArray: '',
-    fillOpacity: 0.7
-  });
+let stateSelectedStyle = {
+                            fillColor: 'white',
+                            weight: 5,
+                            color: "gray",
+                            dashArray: '',
+                            fillOpacity: 0.7
+                          }
 
-  layer.bringToFront()
-}
-
-function countyStyle(feature) {
-  return {
-    fillColor: 'white',
-    weight: 2,
-    opacity: 1,
-    color: 'white',
-    dashArray: '3',
-    fillOpacity: 0.7
-  }
-}
+let countyStyle = {
+                    fillColor: 'white',
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.7
+                  };
 
 function countyHighlightStyle(feature) {
   return {
@@ -61,23 +60,46 @@ function countyHighlightStyle(feature) {
   }
 }
 
+
+let prevLayerClicked = null;
+
 // States Layer
 let stateLayer = L.geoJson(statesData, {
     style: stateStyle,
     onEachFeature: (feature,layer) => {
         layer.on({
-            mouseover: stateHighlightStyle,
+            mouseover: e => {
+                let layer = e.target
+                layer.setStyle(stateHighlightStyle);
+                layer.bringToFront();
+                if (prevLayerClicked !== null) {
+                  prevLayerClicked.setStyle(stateSelectedStyle);
+                }
+            },
             mouseout: e => {
-                geojson.resetStyle(e.target);
+                e.target.setStyle(stateStyle);
+                if (prevLayerClicked !== null) {
+                  prevLayerClicked.setStyle(stateSelectedStyle);
+                }
             },
             click: e => {
+                let layer = e.target;
+                layer.setStyle(stateSelectedStyle);
+                
+                if (prevLayerClicked !== null) {
+                  prevLayerClicked.setStyle(stateStyle);
+                }
+
                 myMap.fitBounds(e.target.getBounds());
+                layer.bringToFront();
+                prevLayerClicked = layer;
+
                 // Identify current state
                 let selectedStateId = feature.id;
+
                 // Retrieve current state ID number from dictionary
                 let selectedStateAbb = stateDict[feature.id]
 
-                console.log("ID", selectedStateAbb);
                 // Create markers for selected state
                 showSchoolMarkers(selectedStateAbb)
             }
@@ -95,7 +117,7 @@ let countyLayer = L.geoJson(countiesData, {
         mouseover: e => {
             let layer = e.target
             layer.setStyle(countyHighlightStyle)
-            
+            layer.bringToFront()
         },
         mouseout: e => {
             e.target.setStyle(countyStyle)
