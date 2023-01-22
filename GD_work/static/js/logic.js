@@ -32,7 +32,7 @@ let stateStyle = {
                   weight: 2,
                   opacity: 1,
                   color: 'gray',
-                  dashArray: '3',
+                  dashArray: '',
                   fillOpacity: 0.7
                   };
 
@@ -59,23 +59,23 @@ let countyStyle = {
                     weight: 2,
                     opacity: 1,
                     color: 'gray',
-                    dashArray: '3',
+                    dashArray: '',
                     fillOpacity: 0.7
                   };
 // Set county style for mouseover
 let countyHighlightStyle = {
-                            fillColor: 'rgb(250,159,181)',
+                            fillColor: 'rgb(65,182,196)',
                             weight: 5,
-                            color: "purple",
+                            color: "gray",
                             dashArray: '',
                             fillOpacity: 0.7
                           };
 
 // Set county style when clicked
 let countySelectedStyle = {
-                            fillColor: 'rgb(250,159,181)',
+                            fillColor: 'rgb(65,182,196)',
                             weight: 5,
-                            color: "purple",
+                            color: "gray",
                             dashArray: '',
                             fillOpacity: 0.7
                           };
@@ -98,36 +98,34 @@ function showCounties(state, map) {
             mouseover: e => {
                 let layer = e.target;
                 layer.setStyle(countyHighlightStyle);
-                if (prevLayerClicked === null) {layer.bringToFront();}
+                // layer.bringToFront();
             },
             mouseout: e => {
                 let layer = e.target;
                 layer.setStyle(countyStyle);
-                // if (prevLayerClicked !== null) {
-                //   prevLayerClicked.setStyle(countyStyle);
-                // }
+                if (prevLayerClicked !== null) {
+                  prevLayerClicked.setStyle(countyStyle);
+                }
                 layer.bringToFront();
 
             },
             click: e => {
+              markers.clearLayers();
                 stateLayer.setStyle(stateStyle);
 
                 if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(countyStyle);
+                  prevLayerClicked.setStyle(stateStyle);
                 }
 
                 let layer = e.target;
                 layer.setStyle(countySelectedStyle);
                 layer.bringToFront();
-                markers.clearLayers();
+                
                 map.fitBounds(layer.getBounds());
                 let selectedCounty = `${feature.properties.NAME}`
-                // console.log("showCounties state, county:", selectedState, selectedCounty)
                 
                 showSchoolMarkers(selectedState, selectedCounty);
                 prevLayerClicked = layer;
-
-
             }
             }).bindPopup(`${feature.properties.NAME} County`);
       }
@@ -149,19 +147,20 @@ function onEachState(feature,layer) {
     return feature.properties.STATE === selectedStateId;
   });
 
-
   layer.on({
       mouseover: e => {
           let layer = e.target;
           layer.setStyle(stateHighlightStyle);
-          // layer.bringToFront();
-          if (prevLayerClicked === null) {layer.bringToFront();}
+          layer.bringToFront();
           console.log("onEachState mouseover", layer);
       },
       mouseout: e => {
           let layer = e.target;
           layer.setStyle(stateStyle);
           if (prevLayerClicked === null) {layer.bringToFront();}
+          // if (prevLayerClicked !== null) {
+          //   prevLayerClicked.setStyle(stateStyle);
+          // }
           console.log("onEachState mouseout", layer);
       },
       click: e => {
@@ -173,7 +172,7 @@ function onEachState(feature,layer) {
           }
 
           myMap.fitBounds(e.target.getBounds());
-          layer.bringToFront();
+          // layer.bringToFront();
           prevLayerClicked = layer;
 
           // Create/display county choropleth layer for selected state
