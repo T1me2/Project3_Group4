@@ -17,7 +17,7 @@ let stateNames = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'G
 let toner = new L.StamenTileLayer("toner-lite");
 
 let stateStyle = {
-                  fillColor: 'rgb(260,252,185)',
+                  fillColor: 'rgb(140,150,198)',
                   weight: 2,
                   opacity: 1,
                   color: 'gray',
@@ -50,84 +50,92 @@ let countyStyle = {
                     fillOpacity: 0.7
                   };
 
-function countyHighlightStyle(feature) {
-  return {
-    fillColor: 'rgb(229,245,249)',
-    weight: 5,
-    color: "white",
-    dashArray: '',
-    fillOpacity: 0.7
-  }
+let countyHighlightStyle = {
+                            fillColor: 'rgb(229,245,249)',
+                            weight: 5,
+                            color: "white",
+                            dashArray: '',
+                            fillOpacity: 0.7
+                          };
+
+// Counties Layer
+function showCounties(state, map) {
+  let countyLayer = L.geoJson(state, {
+      style: countyStyle,
+      onEachFeature: (feature,layer) => {
+          // console.log(feature);
+          layer.on({
+          mouseover: e => {
+              let layer = e.target
+              layer.setStyle(countyHighlightStyle)
+              layer.bringToFront()
+          },
+          mouseout: e => {
+              e.target.setStyle(countyStyle)
+          },
+          click: e => {
+              map.fitBounds(e.target.getBounds());
+              SchoolMarkers
+          }
+          }).bindPopup(`${feature.properties.NAME} County`);
+      }
+  });
 }
 
+function onEachState(feature,layer) {
+  layer.on({
+      mouseover: e => {
+          let layer = e.target
+          layer.setStyle(stateHighlightStyle);
+          layer.bringToFront();
+          if (prevLayerClicked !== null) {
+            prevLayerClicked.setStyle(stateSelectedStyle);
+          }
+      },
+      mouseout: e => {
+          e.target.setStyle(stateStyle);
+          if (prevLayerClicked !== null) {
+            prevLayerClicked.setStyle(stateSelectedStyle);
+          }
+      },
+      click: e => {
+          let layer = e.target;
+          layer.setStyle(stateSelectedStyle);
+          
+          if (prevLayerClicked !== null) {
+            prevLayerClicked.setStyle(stateStyle);
+          }
+
+          myMap.fitBounds(e.target.getBounds());
+          layer.bringToFront();
+          prevLayerClicked = layer;
+
+          // Identify current state
+          let selectedStateId = feature.id;
+
+          // Retrieve current state ID number from dictionary
+          let selectedStateAbb = stateDict[feature.id]
+
+          let selectedStateCounties = countiesData.features.filter(feature => {
+            return feature.properties.STATE === selectedStateId;
+          });
+
+          console.log(selectedStateCounties);
+
+
+
+          // Create markers for selected state
+          showSchoolMarkers(selectedStateAbb)
+      }
+  });
+}
 
 let prevLayerClicked = null;
 
 // States Layer
 let stateLayer = L.geoJson(statesData, {
     style: stateStyle,
-    onEachFeature: (feature,layer) => {
-        layer.on({
-            mouseover: e => {
-                let layer = e.target
-                layer.setStyle(stateHighlightStyle);
-                layer.bringToFront();
-                if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(stateSelectedStyle);
-                }
-            },
-            mouseout: e => {
-                e.target.setStyle(stateStyle);
-                if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(stateSelectedStyle);
-                }
-            },
-            click: e => {
-                let layer = e.target;
-                layer.setStyle(stateSelectedStyle);
-                
-                if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(stateStyle);
-                }
-
-                myMap.fitBounds(e.target.getBounds());
-                layer.bringToFront();
-                prevLayerClicked = layer;
-
-                // Identify current state
-                let selectedStateId = feature.id;
-
-                // Retrieve current state ID number from dictionary
-                let selectedStateAbb = stateDict[feature.id]
-
-                // Create markers for selected state
-                showSchoolMarkers(selectedStateAbb)
-            }
-        });
-    }
-});
-
-
-// Counties Layer
-let countyLayer = L.geoJson(countiesData, {
-    style: countyStyle,
-    onEachFeature: (feature,layer) => {
-        // console.log(feature);
-        layer.on({
-        mouseover: e => {
-            let layer = e.target
-            layer.setStyle(countyHighlightStyle)
-            layer.bringToFront()
-        },
-        mouseout: e => {
-            e.target.setStyle(countyStyle)
-        },
-        click: e => {
-            myMap.fitBounds(e.target.getBounds());
-            SchoolMarkers
-        }
-        }).bindPopup(`${feature.properties.NAME} County`);
-    }
+    onEachFeature: onEachState
 });
 
 // let heat = L.heatLayer(locations, {
@@ -143,7 +151,7 @@ let baseMaps = {
 
 let overlayMaps = {
     States: stateLayer,
-    Counties: countyLayer
+    // Counties: countyLayer
 }
 
 // Create the map object
@@ -203,12 +211,10 @@ function showSchoolMarkers(state) {
     d3.json(url+stateIdsOnly).then(data => {
 
         let stateCount = data.objectIds.length;
-        console.log("State count", stateCount);
         let schoolsRemaining = stateCount;
 
         if (stateCount <= 2000) {
             d3.json(url+stateQueryOffset).then(response => {
-                // console.log("data", response);
                 addMarkers(response)
             });
         }
@@ -216,7 +222,6 @@ function showSchoolMarkers(state) {
             while (schoolsRemaining > 0) {
                 stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
                 d3.json(url+stateQueryOffset).then(response => {
-                    // console.log("data", response);
                     addMarkers(response)
                 });
 
@@ -233,7 +238,7 @@ function showSchoolMarkers(state) {
 
 function addMarkers(data) {
     data.features.forEach(element => {
-        console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
+        // console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
         // Add each location as individual marker with popup info
         markers.addLayer(L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
                             .on({
