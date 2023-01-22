@@ -77,8 +77,9 @@ function showCounties(state, map) {
           },
           click: e => {
               map.fitBounds(e.target.getBounds());
-              prevLayerClicked = layer;
+              
               let layer = e.target
+              prevLayerClicked = layer;
           }
           }).bindPopup(`${feature.properties.NAME} County`);
       }
@@ -89,20 +90,31 @@ function showCounties(state, map) {
 
 
 function onEachState(feature,layer) {
+  // Identify current state
+  let selectedStateId = feature.id;
+
+  // Retrieve current state ID number from dictionary
+  let selectedStateAbb = stateDict[feature.id]
+
+  let selectedStateCounties = countiesData.features.filter(feature => {
+    return feature.properties.STATE === selectedStateId;
+  });
+
+
   layer.on({
       mouseover: e => {
           let layer = e.target
           layer.setStyle(stateHighlightStyle);
           layer.bringToFront();
           if (prevLayerClicked !== null) {
-            prevLayerClicked.setStyle(stateSelectedStyle);
+            // prevLayerClicked.setStyle(stateSelectedStyle);
           }
       },
       mouseout: e => {
           e.target.setStyle(stateStyle);
           if (prevLayerClicked !== null) {
             // prevLayerClicked.setStyle(stateSelectedStyle);
-            showCounties(selectedStateCounties, myMap);
+            // showCounties(selectedStateCounties, myMap);
           }
       },
       click: e => {
@@ -117,22 +129,13 @@ function onEachState(feature,layer) {
           layer.bringToFront();
           prevLayerClicked = layer;
 
-          // Identify current state
-          let selectedStateId = feature.id;
-
-          // Retrieve current state ID number from dictionary
-          let selectedStateAbb = stateDict[feature.id]
-
-          let selectedStateCounties = countiesData.features.filter(feature => {
-            return feature.properties.STATE === selectedStateId;
-          });
+          
           console.log(selectedStateCounties);
 
           showCounties(selectedStateCounties, myMap);
 
-
           // Create markers for selected state
-          showSchoolMarkers(selectedStateAbb)
+          showSchoolMarkers(selectedStateAbb);
       }
   });
 }
@@ -244,6 +247,9 @@ function showSchoolMarkers(state) {
 
 
 function addMarkers(data) {
+    // if (myMap.hasLayer(markers)) {
+    markers.clearLayers();
+    // }
     data.features.forEach(element => {
         // console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
         // Add each location as individual marker with popup info
