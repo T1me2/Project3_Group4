@@ -16,59 +16,37 @@ let stateNames = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'G
 // Define the street and toner tile layers
 let toner = new L.StamenTileLayer("toner-lite");
 
-function stateStyle(feature) {
-  return {
-    fillColor: 'rgb(153,216,201)',
-    weight: 2,
-    opacity: 1,
-    color: 'gray',
-    dashArray: '3',
-    fillOpacity: 0.7
-    }
-}
-
-function stateHighlightStyle(e) {
-  let layer = e.target;
-
-  layer.setStyle({
-    weight: 5,
-    color: "white",
-    dashArray: '',
-    fillOpacity: 0.7
-  });
-
-  layer.bringToFront()
-}
-
-function countyStyle(feature) {
-  return {
-    fillColor: 'white',
-    weight: 2,
-    opacity: 1,
-    color: 'white',
-    dashArray: '3',
-    fillOpacity: 0.7
-  }
-}
-
-function countyHighlightStyle(feature) {
-  return {
-    fillColor: 'rgb(229,245,249)',
-    weight: 5,
-    color: "white",
-    dashArray: '',
-    fillOpacity: 0.7
-  }
-}
-
 // States Layer
 let stateLayer = L.geoJson(statesData, {
-    style: stateStyle,
+    style: {
+        fillColor: 'rgb(153,216,201)',
+        weight: 2,
+        opacity: 1,
+        color: 'gray',
+        dashArray: '3',
+        fillOpacity: 0.7
+    },
     onEachFeature: (feature,layer) => {
         layer.on({
-            mouseover: stateHighlightStyle,
+            mouseover: e => {
+                let layer = e.target
+                layer.setStyle({
+                weight: 5,
+                color: "white",
+                dashArray: '',
+                fillOpacity: 0.7
+                })
+                layer.bringToFront()
+            },
             mouseout: e => {
-                geojson.resetStyle(e.target);
+                e.target.setStyle({
+                fillColor: 'rgb(153,216,201)',
+                weight: 2,
+                opacity: 1,
+                color: 'gray',
+                dashArray: '3',
+                fillOpacity: 0.7
+                })
             },
             click: e => {
                 myMap.fitBounds(e.target.getBounds());
@@ -88,17 +66,36 @@ let stateLayer = L.geoJson(statesData, {
 
 // Counties Layer
 let countyLayer = L.geoJson(countiesData, {
-    style: countyStyle,
+    style: {
+        fillColor: 'rgb(229,245,249)',
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    },
     onEachFeature: (feature,layer) => {
         // console.log(feature);
         layer.on({
         mouseover: e => {
             let layer = e.target
-            layer.setStyle(countyHighlightStyle)
-            
+            layer.setStyle({
+            weight: 5,
+            color: "white",
+            dashArray: '',
+            fillOpacity: 0.7
+            })
+            layer.bringToFront()
         },
         mouseout: e => {
-            e.target.setStyle(countyStyle)
+            e.target.setStyle({
+            fillColor: 'rgb(229,245,249)',
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+            })
         },
         click: e => {
             myMap.fitBounds(e.target.getBounds());
