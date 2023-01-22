@@ -34,7 +34,6 @@ let stateHighlightStyle = {
                           };
 
 let stateSelectedStyle = {
-                            fillColor: 'white',
                             weight: 5,
                             color: "gray",
                             dashArray: '',
@@ -60,7 +59,8 @@ let countyHighlightStyle = {
 
 // Counties Layer
 function showCounties(state, map) {
-  let countyLayer = L.geoJson(state, {
+  countyLayer.clearLayers();
+  let counties = L.geoJson(state, {
       style: countyStyle,
       onEachFeature: (feature,layer) => {
           // console.log(feature);
@@ -84,7 +84,8 @@ function showCounties(state, map) {
           }).bindPopup(`${feature.properties.NAME} County`);
       }
   });
-
+  
+  countyLayer.addLayer(counties);
   map.addLayer(countyLayer);
 }
 
@@ -122,16 +123,14 @@ function onEachState(feature,layer) {
           layer.setStyle(stateSelectedStyle);
           
           if (prevLayerClicked !== null) {
-            prevLayerClicked.setStyle(stateStyle);
+            // prevLayerClicked.removeMarkers();
           }
 
           myMap.fitBounds(e.target.getBounds());
           layer.bringToFront();
           prevLayerClicked = layer;
 
-          
-          console.log(selectedStateCounties);
-
+          // Create/display county choropleth layer for selected state
           showCounties(selectedStateCounties, myMap);
 
           // Create markers for selected state
@@ -171,15 +170,14 @@ let myMap = L.map("map", {
     layers: [toner, stateLayer]
     });
 
+let countyLayer = L.layerGroup();
+
 // Add layer control
 L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
 }).addTo(myMap);
 
 
-function updateMap(existingMap, markerLayer) {
-    markerLayer.addTo(myMap);
-}
 
 // Create icons for school markers
 let schoolIcon = L.icon({
@@ -237,9 +235,6 @@ function showSchoolMarkers(state) {
 
                 offsetCount += 2000;
                 schoolsRemaining -= 2000;
-
-                // console.log("offset", offsetCount);
-                // console.log("schools left",schoolsRemaining);
             }
         }
     });
@@ -247,31 +242,33 @@ function showSchoolMarkers(state) {
 
 
 function addMarkers(data) {
-    // if (myMap.hasLayer(markers)) {
+
     markers.clearLayers();
-    // }
+
     data.features.forEach(element => {
         // console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
         // Add each location as individual marker with popup info
-        markers.addLayer(L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
-                            .on({
-                            mouseover: e => {
-                                e.target.setIcon(bigIcon);
-                            },
-                            mouseout: e => 
-                                e.target.setIcon(schoolIcon)
-                            }).bindPopup(`<h3>${element.attributes.SCH_NAME}</h3><hr>
-                                        <h5>${element.attributes.LCITY}, ${element.attributes.LSTATE}</h5>
-                                        <p>Level: ${element.attributes.SCHOOL_LEVEL}<br>
-                                        Student Population: ${element.attributes.TOTAL}<br>
-                                        Total Free/Reduced Lunch: ${element.attributes.TOTFRL}<br>
-                                        % Free/Reduced Lunch: ${((element.attributes.TOTFRL/element.attributes.TOTAL)*100).toFixed(2)}%</p>`
-                            ));
+        
+        schoolMarker = L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
+                          .on({
+                          mouseover: e => {
+                              e.target.setIcon(bigIcon);
+                          },
+                          mouseout: e => 
+                              e.target.setIcon(schoolIcon)
+                          }).bindPopup(`<h3>${element.attributes.SCH_NAME}</h3><hr>
+                                      <h5>${element.attributes.LCITY}, ${element.attributes.LSTATE}</h5>
+                                      <p>Level: ${element.attributes.SCHOOL_LEVEL}<br>
+                                      Student Population: ${element.attributes.TOTAL}<br>
+                                      Total Free/Reduced Lunch: ${element.attributes.TOTFRL}<br>
+                                      % Free/Reduced Lunch: ${((element.attributes.TOTFRL/element.attributes.TOTAL)*100).toFixed(2)}%</p>`
+                          )
+        markers.addLayer(schoolMarker);
 
         // Add coordinates to schoolLocations for heat map                
         schoolLocations.push([element.geometry.y, element.geometry.x]);
     }); // End ForEach
-    updateMap(myMap, markers);
+    markers.addTo(myMap);
 }
 
 
