@@ -57,50 +57,6 @@ let stateLayer = L.geoJson(statesData, {
     }
 });
 
-
-// Counties Layer
-// let countyLayer = L.geoJson(countiesData, {
-//     style: {
-//         fillColor: 'rgb(229,245,249)',
-//         weight: 2,
-//         opacity: 1,
-//         color: 'white',
-//         dashArray: '3',
-//         fillOpacity: 0.7
-//     },
-//     onEachFeature: (feature,layer) => {
-//         // console.log(feature);
-//         layer.on({
-//         mouseover: e => {
-//             let layer = e.target
-//             layer.setStyle({
-//             weight: 5,
-//             color: "white",
-//             dashArray: '',
-//             fillOpacity: 0.7
-//             })
-//             layer.bringToFront()
-//         },
-//         mouseout: e => {
-//             e.target.setStyle({
-//             fillColor: 'rgb(229,245,249)',
-//             weight: 2,
-//             opacity: 1,
-//             color: 'white',
-//             dashArray: '3',
-//             fillOpacity: 0.7
-//             })
-//         },
-//         click: e => {
-//             myMap.fitBounds(e.target.getBounds());
-//             createSchoolMarkers
-//         }
-//         }).bindPopup(`${feature.properties.NAME} County`);
-//     }
-// });
-
-
-
 // Create base and overlay maps
 let baseMaps = {
     Toner: toner
@@ -108,6 +64,8 @@ let baseMaps = {
 
 
 let overlayMaps = {
+    // "School Markers": markersLayer,
+    // "Heat Map": heat,
     States: stateLayer
 }
 
