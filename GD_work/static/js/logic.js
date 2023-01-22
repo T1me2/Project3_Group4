@@ -16,6 +16,17 @@ let stateNames = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'G
 // Define the street and toner tile layers
 let toner = new L.StamenTileLayer("toner-lite");
 
+
+// Define color function for county walkability choropleth 
+function getCountyColor(walkInd) {
+  return walkInd > 16 ? '#810f7c' :
+         walkInd > 12 ? '#8856a7' :
+         walkInd > 8  ? '#8c96c6' :
+         walkInd > 4  ? '#b3cde3' :
+                        '#edf8fb' ;
+}
+
+// Set default style for state choropleth
 let stateStyle = {
                   fillColor: 'rgb(140,150,198)',
                   weight: 2,
@@ -25,6 +36,7 @@ let stateStyle = {
                   fillOpacity: 0.7
                   };
 
+// Set state style for mouseover
 let stateHighlightStyle = {
                             fillColor: 'rgb(153,216,201)',
                             weight: 5,
@@ -33,13 +45,15 @@ let stateHighlightStyle = {
                             fillOpacity: 0.7
                           };
 
+// Set state style when clicked
 let stateSelectedStyle = {
                             weight: 5,
                             color: "gray",
                             dashArray: '',
                             fillOpacity: 0.7
-                          }
+                          };
 
+// Set default style for county choropleth
 let countyStyle = {
                     fillColor: 'rgb(224,236,244)',
                     weight: 2,
@@ -48,9 +62,18 @@ let countyStyle = {
                     dashArray: '3',
                     fillOpacity: 0.7
                   };
-
+// Set county style for mouseover
 let countyHighlightStyle = {
-                            fillColor: 'rgb(229,245,249)',
+                            fillColor: 'rgb(250,159,181)',
+                            weight: 5,
+                            color: "purple",
+                            dashArray: '',
+                            fillOpacity: 0.7
+                          };
+
+// Set county style when clicked
+let countySelectedStyle = {
+                            fillColor: 'rgb(250,159,181)',
                             weight: 5,
                             color: "purple",
                             dashArray: '',
@@ -61,9 +84,9 @@ let countyHighlightStyle = {
 function showCounties(state, map) {
 
   let selectedStateId = state[0].properties.STATE;
-  let selectedState = stateDict[selectedStateId]
-
-  console.log("selectedState", selectedState);
+  let selectedState = stateDict[selectedStateId];
+  showSchoolMarkers(selectedState);
+  // console.log("selectedState", selectedState);
   
 
   countyLayer.clearLayers();
@@ -71,28 +94,40 @@ function showCounties(state, map) {
       style: countyStyle,
 
       onEachFeature: (feature,layer) => {
-          console.log("showcounties:",feature);
-
           layer.on({
             mouseover: e => {
                 let layer = e.target;
                 layer.setStyle(countyHighlightStyle);
-                layer.bringToFront();
+                if (prevLayerClicked === null) {layer.bringToFront();}
             },
             mouseout: e => {
                 let layer = e.target;
                 layer.setStyle(countyStyle);
-                layer.bringToFront()
+                // if (prevLayerClicked !== null) {
+                //   prevLayerClicked.setStyle(countyStyle);
+                // }
+                layer.bringToFront();
+
             },
             click: e => {
-              console.log("showCounties click", feature)
-                // markers.clearLayers();
-                map.fitBounds(e.target.getBounds());
-                let selectedCounty = `${feature.properties.NAME}`
+                stateLayer.setStyle(stateStyle);
 
+                if (prevLayerClicked !== null) {
+                  prevLayerClicked.setStyle(countyStyle);
+                }
+
+                let layer = e.target;
+                layer.setStyle(countySelectedStyle);
+                layer.bringToFront();
+                markers.clearLayers();
+                map.fitBounds(layer.getBounds());
+                let selectedCounty = `${feature.properties.NAME}`
+                // console.log("showCounties state, county:", selectedState, selectedCounty)
+                
                 showSchoolMarkers(selectedState, selectedCounty);
-                let layer = e.target
                 prevLayerClicked = layer;
+
+
             }
             }).bindPopup(`${feature.properties.NAME} County`);
       }
@@ -117,21 +152,24 @@ function onEachState(feature,layer) {
 
   layer.on({
       mouseover: e => {
-          let layer = e.target
+          let layer = e.target;
           layer.setStyle(stateHighlightStyle);
-          layer.bringToFront();
+          // layer.bringToFront();
           if (prevLayerClicked === null) {layer.bringToFront();}
+          console.log("onEachState mouseover", layer);
       },
       mouseout: e => {
-          e.target.setStyle(stateStyle);
+          let layer = e.target;
+          layer.setStyle(stateStyle);
           if (prevLayerClicked === null) {layer.bringToFront();}
+          console.log("onEachState mouseout", layer);
       },
       click: e => {
           let layer = e.target;
           layer.setStyle(stateSelectedStyle);
           
           if (prevLayerClicked !== null) {
-            // prevLayerClicked.removeMarkers();
+            prevLayerClicked.setStyle(stateStyle);
           }
 
           myMap.fitBounds(e.target.getBounds());
@@ -142,7 +180,9 @@ function onEachState(feature,layer) {
           showCounties(selectedStateCounties, myMap);
 
           // Create markers for selected state
-          showSchoolMarkers(selectedStateAbb);
+          // showSchoolMarkers(selectedStateAbb);
+
+          console.log("onEachState click", layer);
       }
   });
 }
@@ -209,12 +249,12 @@ let schoolLocations = [];
 let markers = L.markerClusterGroup();
 
 function showSchoolMarkers(state, county='*') {
-  console.log("SHOW SCHOOL MARKERS:",state, county)
-    // markers.clearLayers();
+  // console.log("SHOW SCHOOL MARKERS:",state, county)
+    markers.clearLayers();
     const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
 
     if (county !== '*') {county = `${county} County`}
-    console.log("Inside showschoolmarkers",county);
+    // console.log("Inside showschoolmarkers",county);
 
     // Initialize first indices of each "page" to 0 and 1999
     let firstIndex = 0;
@@ -254,7 +294,6 @@ function showSchoolMarkers(state, county='*') {
 
 
 function addMarkers(data) {
-
     markers.clearLayers();
 
     data.features.forEach(element => {
@@ -280,6 +319,7 @@ function addMarkers(data) {
         // Add coordinates to schoolLocations for heat map                
         schoolLocations.push([element.geometry.y, element.geometry.x]);
     }); // End ForEach
+    // console.log("AddMARKERS FUNCTION:", markers);
     markers.addTo(myMap);
 }
 
