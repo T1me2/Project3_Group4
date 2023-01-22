@@ -42,7 +42,7 @@ let stateSelectedStyle = {
                           }
 
 let countyStyle = {
-                    fillColor: 'white',
+                    fillColor: 'lightgray',
                     weight: 2,
                     opacity: 1,
                     color: 'white',
@@ -66,21 +66,27 @@ function showCounties(state, map) {
           // console.log(feature);
           layer.on({
           mouseover: e => {
-              let layer = e.target
-              layer.setStyle(countyHighlightStyle)
-              layer.bringToFront()
+              let layer = e.target;
+              layer.setStyle(countyHighlightStyle);
+              layer.bringToFront();
           },
           mouseout: e => {
-              e.target.setStyle(countyStyle)
+              let layer = e.target;
+              layer.setStyle(countyStyle);
+              layer.bringToFront()
           },
           click: e => {
               map.fitBounds(e.target.getBounds());
-              SchoolMarkers
+              prevLayerClicked = layer;
+              let layer = e.target
           }
           }).bindPopup(`${feature.properties.NAME} County`);
       }
   });
+
+  map.addLayer(countyLayer);
 }
+
 
 function onEachState(feature,layer) {
   layer.on({
@@ -95,7 +101,8 @@ function onEachState(feature,layer) {
       mouseout: e => {
           e.target.setStyle(stateStyle);
           if (prevLayerClicked !== null) {
-            prevLayerClicked.setStyle(stateSelectedStyle);
+            // prevLayerClicked.setStyle(stateSelectedStyle);
+            showCounties(selectedStateCounties, myMap);
           }
       },
       click: e => {
@@ -119,9 +126,9 @@ function onEachState(feature,layer) {
           let selectedStateCounties = countiesData.features.filter(feature => {
             return feature.properties.STATE === selectedStateId;
           });
-
           console.log(selectedStateCounties);
 
+          showCounties(selectedStateCounties, myMap);
 
 
           // Create markers for selected state
