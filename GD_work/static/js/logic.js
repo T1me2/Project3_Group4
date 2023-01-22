@@ -41,10 +41,10 @@ let stateSelectedStyle = {
                           }
 
 let countyStyle = {
-                    fillColor: 'lightgray',
+                    fillColor: 'rgb(224,236,244)',
                     weight: 2,
                     opacity: 1,
-                    color: 'white',
+                    color: 'gray',
                     dashArray: '3',
                     fillOpacity: 0.7
                   };
@@ -52,36 +52,49 @@ let countyStyle = {
 let countyHighlightStyle = {
                             fillColor: 'rgb(229,245,249)',
                             weight: 5,
-                            color: "white",
+                            color: "purple",
                             dashArray: '',
                             fillOpacity: 0.7
                           };
 
 // Counties Layer
 function showCounties(state, map) {
+
+  let selectedStateId = state[0].properties.STATE;
+  let selectedState = stateDict[selectedStateId]
+
+  console.log("selectedState", selectedState);
+  
+
   countyLayer.clearLayers();
   let counties = L.geoJson(state, {
       style: countyStyle,
+
       onEachFeature: (feature,layer) => {
-          // console.log(feature);
+          console.log("showcounties:",feature);
+
           layer.on({
-          mouseover: e => {
-              let layer = e.target;
-              layer.setStyle(countyHighlightStyle);
-              layer.bringToFront();
-          },
-          mouseout: e => {
-              let layer = e.target;
-              layer.setStyle(countyStyle);
-              layer.bringToFront()
-          },
-          click: e => {
-              map.fitBounds(e.target.getBounds());
-              
-              let layer = e.target
-              prevLayerClicked = layer;
-          }
-          }).bindPopup(`${feature.properties.NAME} County`);
+            mouseover: e => {
+                let layer = e.target;
+                layer.setStyle(countyHighlightStyle);
+                layer.bringToFront();
+            },
+            mouseout: e => {
+                let layer = e.target;
+                layer.setStyle(countyStyle);
+                layer.bringToFront()
+            },
+            click: e => {
+              console.log("showCounties click", feature)
+                // markers.clearLayers();
+                map.fitBounds(e.target.getBounds());
+                let selectedCounty = `${feature.properties.NAME}`
+
+                showSchoolMarkers(selectedState, selectedCounty);
+                let layer = e.target
+                prevLayerClicked = layer;
+            }
+            }).bindPopup(`${feature.properties.NAME} County`);
       }
   });
   
@@ -107,16 +120,11 @@ function onEachState(feature,layer) {
           let layer = e.target
           layer.setStyle(stateHighlightStyle);
           layer.bringToFront();
-          if (prevLayerClicked !== null) {
-            // prevLayerClicked.setStyle(stateSelectedStyle);
-          }
+          if (prevLayerClicked === null) {layer.bringToFront();}
       },
       mouseout: e => {
           e.target.setStyle(stateStyle);
-          if (prevLayerClicked !== null) {
-            // prevLayerClicked.setStyle(stateSelectedStyle);
-            // showCounties(selectedStateCounties, myMap);
-          }
+          if (prevLayerClicked === null) {layer.bringToFront();}
       },
       click: e => {
           let layer = e.target;
@@ -200,9 +208,13 @@ let schoolLocations = [];
 // Initialize the marker cluster group (will add markers in while loop)
 let markers = L.markerClusterGroup();
 
-function showSchoolMarkers(state) {
+function showSchoolMarkers(state, county='*') {
+  console.log("SHOW SCHOOL MARKERS:",state, county)
+    // markers.clearLayers();
     const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
 
+    if (county !== '*') {county = `${county} County`}
+    console.log("Inside showschoolmarkers",county);
 
     // Initialize first indices of each "page" to 0 and 1999
     let firstIndex = 0;
@@ -213,8 +225,8 @@ function showSchoolMarkers(state) {
     let offsetCount = 0;
 
     const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
-    let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
-    let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+    let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
+    let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
 
     d3.json(url+stateIdsOnly).then(data => {
 
@@ -228,7 +240,7 @@ function showSchoolMarkers(state) {
         }
         else {
             while (schoolsRemaining > 0) {
-                stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+                stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
                 d3.json(url+stateQueryOffset).then(response => {
                     addMarkers(response)
                 });
