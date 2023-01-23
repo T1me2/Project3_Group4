@@ -22,7 +22,7 @@ collection = db.data
 def group_data():
     """Return what we need to be json"""
     result_list = []
-    results = collection.find()
+    results = list(collection.find())
     for result in results:
         result_list.append(result)
     
