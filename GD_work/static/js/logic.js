@@ -126,6 +126,7 @@ function showCounties(stateJson, map) {
                 
                 map.fitBounds(layer.getBounds());
                 
+                d3.select('.panel-primary').text(`${feature.properties.NAME} County, ${selectedState}`);
                 
                 prevLayerClicked = layer;
             }
@@ -166,9 +167,12 @@ function onEachState(feature,layer) {
           if (prevLayerClicked !== null) {
             prevLayerClicked.setStyle(stateStyle);
           }
-          
+
           myMap.fitBounds(e.target.getBounds());
           prevLayerClicked = layer;
+
+
+          d3.select('.panel-primary').text(selectedStateAbb);
 
           // Create/display county choropleth layer for selected state
           showCounties(selectedStateCounties, myMap);
@@ -358,30 +362,30 @@ function addMarkers(data) {
 
 
 ///// Create function to initialize dashboard and create dropdown menu
-function createDropdownMenu() {
-    // Loop through sample data to add sample IDs to dropdown menu
-    for (i=0; i<stateNames.length; i++) {
-      // Select the dropdown menu element using D3
-      let dropDownMenu = d3.select("#selDataset");
-      // Add new "option" element for every sample in dataset
-      let newOption = dropDownMenu.append("option");
-      // Set text in each option to the sample ID
-      newOption.text(stateNames[i]);
+// function createDropdownMenu() {
+//     // Loop through sample data to add sample IDs to dropdown menu
+//     for (i=0; i<stateNames.length; i++) {
+//       // Select the dropdown menu element using D3
+//       let dropDownMenu = d3.select("#selDataset");
+//       // Add new "option" element for every sample in dataset
+//       let newOption = dropDownMenu.append("option");
+//       // Set text in each option to the sample ID
+//       newOption.text(stateNames[i]);
 
-      console.log("dropdownMenu", dropDownMenu);
-    }
-  };
+//       console.log("dropdownMenu", dropDownMenu);
+//     }
+//   };
   
-  ///// Create function to update page based on changes in dropdown menu
-  function optionChanged(state) {
-    console.log("optionChanged:", state);
-    // Update charts to data for selected sample ID
-    createCharts(sampleID);
-    // Updata demographic info panel for selected sample ID
-    getMetadata(sampleID);
-  }
+//   ///// Create function to update page based on changes in dropdown menu
+//   function optionChanged(state) {
+//     console.log("optionChanged:", state);
+//     // Update charts to data for selected sample ID
+//     createCharts(sampleID);
+//     // Updata demographic info panel for selected sample ID
+//     getMetadata(sampleID);
+//   }
   
-  createDropdownMenu();
+  // createDropdownMenu();
 
 
   
