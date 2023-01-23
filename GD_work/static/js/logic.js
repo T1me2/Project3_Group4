@@ -50,7 +50,7 @@ let stateSelectedStyle = {
                             weight: 5,
                             color: "gray",
                             dashArray: '',
-                            fillOpacity: 0.7
+                            fillOpacity: 0.5
                           };
 
 // Set default style for county choropleth
@@ -77,15 +77,15 @@ let countySelectedStyle = {
                             weight: 5,
                             color: "gray",
                             dashArray: '',
-                            fillOpacity: 0.7
+                            fillOpacity: 0.5
                           };
 
-// Counties Layer
+// Display county choropleth when state is clicked
 function showCounties(stateJson, map) {
 
   let selectedStateId = stateJson[0].properties.STATE;
   let selectedState = stateDict[selectedStateId];
-  showSchoolMarkers(selectedState);
+  showSchoolMarkersState(selectedState);
   // console.log("selectedState", selectedState);
   
 
@@ -99,6 +99,7 @@ function showCounties(stateJson, map) {
                 let layer = e.target;
                 layer.setStyle(countyHighlightStyle);
                 layer.bringToFront();
+                // layer.openPopup(`${feature.properties.NAME} County`);
             },
             mouseout: e => {
                 let layer = e.target;
@@ -131,7 +132,6 @@ function showCounties(stateJson, map) {
             }).bindPopup(`${feature.properties.NAME} County`);
       }
   });
-  
   countyLayer.addLayer(counties);
   map.addLayer(countyLayer);
 }
@@ -144,6 +144,7 @@ function onEachState(feature,layer) {
   // Retrieve current state ID number from dictionary
   let selectedStateAbb = stateDict[feature.id]
 
+  
   let selectedStateCounties = countiesData.features.filter(feature => {
     return feature.properties.STATE === selectedStateId;
   });
@@ -152,14 +153,11 @@ function onEachState(feature,layer) {
       mouseover: e => {
           let layer = e.target;
           layer.setStyle(stateHighlightStyle);
-          console.log("onEachState mouseover", layer);
       },
       mouseout: e => {
           stateLayer.setStyle(stateStyle);
           let layer = e.target;
           if (prevLayerClicked === null) {layer.bringToFront();}
-         
-          console.log("onEachState mouseout", layer);
       },
       click: e => {
           let layer = e.target;
@@ -168,18 +166,15 @@ function onEachState(feature,layer) {
           if (prevLayerClicked !== null) {
             prevLayerClicked.setStyle(stateStyle);
           }
-
+          
           myMap.fitBounds(e.target.getBounds());
-          // layer.bringToFront();
           prevLayerClicked = layer;
 
           // Create/display county choropleth layer for selected state
           showCounties(selectedStateCounties, myMap);
 
           // Create markers for selected state
-          // showSchoolMarkers(selectedStateAbb);
-
-          console.log("onEachState click", layer);
+          showSchoolMarkersState(selectedStateAbb);
       }
   });
 }
@@ -218,7 +213,7 @@ let myMap = L.map("map", {
 let countyLayer = L.layerGroup();
 
 // Add layer control
-L.control.layers(baseMaps, overlayMaps, {
+let layerControl = L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
 }).addTo(myMap);
 
@@ -249,8 +244,7 @@ function showSchoolMarkers(state, county='') {
   // console.log("SHOW SCHOOL MARKERS:",state, county)
     markers.clearLayers();
     const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
-    console.log("County length:", county.length)
-    if (county !== '*') {county = `${county} County`}
+    if (county !== '') {county = `${county} County`}
     // console.log("Inside showschoolmarkers",county);
 
     // Initialize first indices of each "page" to 0 and 1999
@@ -289,6 +283,47 @@ function showSchoolMarkers(state, county='') {
     });
 }
 
+function showSchoolMarkersState(state) {
+  markers.clearLayers();
+
+  const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
+
+  // Initialize first indices of each "page" to 0 and 1999
+  let firstIndex = 0;
+  let lastIndex = 2000;
+
+  // Set default for current length of api return call (can only do 2000 at a time)
+  let currentLength = 2000;
+  let offsetCount = 0;
+
+  const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
+  let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
+  let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+
+  d3.json(url+stateIdsOnly).then(data => {
+
+      let stateCount = data.objectIds.length;
+      let schoolsRemaining = stateCount;
+
+      if (stateCount <= 2000) {
+          d3.json(url+stateQueryOffset).then(response => {
+              addMarkers(response)
+          });
+      }
+      else {
+          while (schoolsRemaining > 0) {
+              stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+              d3.json(url+stateQueryOffset).then(response => {
+                  addMarkers(response)
+              });
+
+              offsetCount += 2000;
+              schoolsRemaining -= 2000;
+          }
+      }
+  });
+}
+
 
 function addMarkers(data) {
     markers.clearLayers();
@@ -318,6 +353,7 @@ function addMarkers(data) {
     }); // End ForEach
     // console.log("AddMARKERS FUNCTION:", markers);
     markers.addTo(myMap);
+    // layerControl.addOverlay(markers, "Schools");
 }
 
 
@@ -331,15 +367,21 @@ function createDropdownMenu() {
       let newOption = dropDownMenu.append("option");
       // Set text in each option to the sample ID
       newOption.text(stateNames[i]);
+
+      console.log("dropdownMenu", dropDownMenu);
     }
   };
   
-  // ///// Create function to update page based on changes in dropdown menu
-  // function optionChanged(state = stateNames[0]) {
-  //   // Update charts to data for selected sample ID
-  //   createCharts(sampleID);
-  //   // Updata demographic info panel for selected sample ID
-  //   getMetadata(sampleID);
-  // }
+  ///// Create function to update page based on changes in dropdown menu
+  function optionChanged(state) {
+    console.log("optionChanged:", state);
+    // Update charts to data for selected sample ID
+    createCharts(sampleID);
+    // Updata demographic info panel for selected sample ID
+    getMetadata(sampleID);
+  }
   
   createDropdownMenu();
+
+
+  
