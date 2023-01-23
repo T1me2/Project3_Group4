@@ -81,16 +81,16 @@ let countySelectedStyle = {
                           };
 
 // Counties Layer
-function showCounties(state, map) {
+function showCounties(stateJson, map) {
 
-  let selectedStateId = state[0].properties.STATE;
+  let selectedStateId = stateJson[0].properties.STATE;
   let selectedState = stateDict[selectedStateId];
   showSchoolMarkers(selectedState);
   // console.log("selectedState", selectedState);
   
 
   countyLayer.clearLayers();
-  let counties = L.geoJson(state, {
+  let counties = L.geoJson(stateJson, {
       style: countyStyle,
 
       onEachFeature: (feature,layer) => {
@@ -98,7 +98,7 @@ function showCounties(state, map) {
             mouseover: e => {
                 let layer = e.target;
                 layer.setStyle(countyHighlightStyle);
-                // layer.bringToFront();
+                layer.bringToFront();
             },
             mouseout: e => {
                 let layer = e.target;
@@ -113,7 +113,6 @@ function showCounties(state, map) {
                 let selectedCounty = `${feature.properties.NAME}`
                 showSchoolMarkers(selectedState, selectedCounty);
 
-                markers.clearLayers();
                 stateLayer.setStyle(stateStyle);
 
                 if (prevLayerClicked !== null) {
@@ -153,16 +152,15 @@ function onEachState(feature,layer) {
       mouseover: e => {
           let layer = e.target;
           layer.setStyle(stateHighlightStyle);
-          layer.bringToFront();
+          // layer.bringToFront();
           console.log("onEachState mouseover", layer);
       },
       mouseout: e => {
+          stateLayer.setStyle(stateStyle);
           let layer = e.target;
-          layer.setStyle(stateStyle);
+          // layer.setStyle(stateStyle);
           if (prevLayerClicked === null) {layer.bringToFront();}
-          // if (prevLayerClicked !== null) {
-          //   prevLayerClicked.setStyle(stateStyle);
-          // }
+         
           console.log("onEachState mouseout", layer);
       },
       click: e => {
@@ -249,11 +247,11 @@ let schoolLocations = [];
 // Initialize the marker cluster group (will add markers in while loop)
 let markers = L.markerClusterGroup();
 
-function showSchoolMarkers(state, county='*') {
+function showSchoolMarkers(state, county='') {
   // console.log("SHOW SCHOOL MARKERS:",state, county)
     markers.clearLayers();
     const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
-
+    console.log("County length:", county.length)
     if (county !== '*') {county = `${county} County`}
     // console.log("Inside showschoolmarkers",county);
 
