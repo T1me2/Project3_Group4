@@ -19,8 +19,8 @@ collection = db.data
 
 
 #create routes
-@app.route("/api/v1.0/project3/group4/data")
-def group_data():
+@app.route("/find/", methods =['GET'])
+def findAll():
     """Return what we need to be json"""
     output = {}
     i = 0
