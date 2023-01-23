@@ -17,20 +17,18 @@ client = pymongo.MongoClient(conn)
 db = client.project3_group4
 collection = db.data
 
+result_list = []
 
 #create routes
-@app.route("/find/", methods =['GET'])
-def findAll():
+@app.route("/api/v1.0/project3/group4/data")
+def group_data():
     """Return what we need to be json"""
-    output = {}
-    i = 0
+    # result_list = {}
     results = collection.find()
-    for x in results:
-        output[i] = x
-        output[i].pop('_id')
-        i += 1
+    for result in results:
+        result_list.append(result)
     
-    return jsonify(output)
+    return jsonify(result_list)
     
     
 
