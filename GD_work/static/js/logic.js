@@ -22,16 +22,6 @@ let cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}
   maxZoom: 20,
 });
 
-
-// Define color function for county walkability choropleth 
-function getCountyColor(walkInd) {
-  return walkInd > 16 ? '#810f7c' :
-         walkInd > 12 ? '#8856a7' :
-         walkInd > 8  ? '#8c96c6' :
-         walkInd > 4  ? '#b3cde3' :
-                        '#edf8fb' ;
-}
-
 // Set default style for state choropleth
 let stateStyle = {
                   fillColor: 'rgb(140,150,198)',
@@ -86,13 +76,28 @@ let countySelectedStyle = {
                             fillOpacity: 0.5
                           };
 
+// Define color function for county walkability choropleth 
+function getCountyColor(walkInd) {
+  return walkInd > 16 ? '#810f7c' :
+         walkInd > 12 ? '#8856a7' :
+         walkInd > 8  ? '#8c96c6' :
+         walkInd > 4  ? '#b3cde3' :
+                        '#edf8fb' ;
+
+  //rgb("244,200,96") //least walkable (1-5.75)
+  //rgb("255,255,163") //below avg walkable (5.76-10.5)
+  //rgb("204,253,166") //above avg walkable (10.51-15.25)
+  //rgb("133,192,95") // most walkable (15.26 - 20)
+}
+
 
 function onEachState(feature,layer) {
   // Identify selected state ID
-  let selectedStateId = feature.id;
+//   let selectedStateId = feature.id;
+  let selectedStateId = feature.properties.GEO_ID.slice(-2);
 
   // Retrieve current state abbreviation from dictionary
-  let selectedStateAbb = stateDict[feature.id]
+  let selectedStateAbb = stateDict[selectedStateId];
 
   // Filter countiesData geojson to only features within selected state
   let selectedStateCounties = countiesData.features.filter(feature => {
@@ -141,135 +146,6 @@ function onEachState(feature,layer) {
       }
   });
 }
-// Display county choropleth when state is clicked
-function showCounties(stateJson, map) {
-
-  let selectedStateId = stateJson[0].properties.STATE;
-  let selectedState = stateDict[selectedStateId];
-
-  countyLayer.clearLayers();
-  let counties = L.geoJson(stateJson, {
-      style: countyStyle,
-
-      onEachFeature: (feature,layer) => {
-          layer.on({
-            mouseover: e => {
-                let layer = e.target;
-                layer.setStyle(countyHighlightStyle);
-                layer.bringToFront();
-                // layer.openPopup(`${feature.properties.NAME} County`);
-            },
-            mouseout: e => {
-                let layer = e.target;
-                layer.setStyle(countyStyle);
-                if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(countySelectedStyle);
-                }
-                layer.bringToFront();
-
-            },
-            click: e => {
-                // Get selected county name
-                let selectedCounty = `${feature.properties.NAME}`;
-
-                // Update panel header with county/state name
-                d3.select('.panel-title').text(`${feature.properties.NAME} County, ${selectedState}`);
-
-                // Create and display marker clusters for schools within selected county
-                showSchoolMarkers(selectedState, selectedCounty);
-
-                // Reset the state layer to default
-                stateLayer.setStyle(stateStyle);
-
-                // Check if a county was selected before and reset its style
-                if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(countyStyle);
-                }
-
-                // Adjust selected county style
-                let layer = e.target;
-                layer.setStyle(countySelectedStyle);
-
-                layer.bringToFront();
-                
-                // Zoom to fit county boundaries
-                map.fitBounds(layer.getBounds());
-                
-                // Store current selection for later restyling
-                prevLayerClicked = layer;
-            }
-            }).bindPopup(`${feature.properties.NAME} County`);
-      }
-  });
-
-  // Add leaflet geojson layer to existing countyLayer
-  countyLayer.addLayer(counties);
-
-  // Remove any existing county layers
-  layerControl.removeLayer(countyLayer);
-  // Add county layer to layer control
-  layerControl.addOverlay(countyLayer, "Counties");
-  // Add county layer to map
-  map.addLayer(countyLayer);
-}
-
-let prevLayerClicked = null;
-
-
-///// Initialize Map
-
-// States Layer
-let stateLayer = L.geoJson(statesData, {
-    style: stateStyle,
-    onEachFeature: onEachState
-});
-
-// Create base and overlay maps
-let baseMaps = {
-    Toner: toner,
-    CyclOSM: cyclosm
-}
-
-
-let overlayMaps = {
-    States: stateLayer
-}
-
-// Create the map object
-let myMap = L.map("map", {
-    center: [40.2659, -96.7467],
-    zoom: 3,
-    layers: [toner, stateLayer]
-    });
-
-// Create layer group to store county boundary layers 
-let countyLayer = L.layerGroup();
-
-// Add layer control
-let layerControl = L.control.layers(baseMaps, overlayMaps, {
-    collapsed: false
-}).addTo(myMap);
-
-// Create icons for school markers
-let schoolIcon = L.icon({
-    iconUrl: 'education.png',
-    iconSize:     [40, 40], // size of the icon
-    iconAnchor:   [20, 40], // point of the icon which will correspond to marker's location
-    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
-});
-// Create icons for school markers for mouseover
-let bigIcon = L.icon({
-    iconUrl: 'education.png',
-    iconSize:     [60, 60], // size of the icon
-    iconAnchor:   [30, 60], // point of the icon which will correspond to marker's location
-    popupAnchor:  [0, -50] // point from which the popup should open relative to the iconAnchor
-});
-
-// Create empty list to store school locations
-let schoolLocations = [];
-
-// Initialize the marker cluster group (will add markers in while loop)
-let markers = L.markerClusterGroup();
 
 function showSchoolMarkers(state, county='') {
   // console.log("SHOW SCHOOL MARKERS:",state, county)
@@ -362,37 +238,166 @@ function showSchoolMarkersState(state) {
   });
 }
 
+// Display county choropleth when state is clicked
+function showCounties(stateJson, map) {
+
+  let selectedStateId = stateJson[0].properties.STATE;
+  let selectedState = stateDict[selectedStateId];
+
+  countyLayer.clearLayers();
+  let counties = L.geoJson(stateJson, {
+      style: countyStyle,
+
+      onEachFeature: (feature,layer) => {
+          layer.on({
+            mouseover: e => {
+                let layer = e.target;
+                layer.setStyle(countyHighlightStyle);
+                layer.bringToFront();
+                // layer.openPopup(`${feature.properties.NAME} County`);
+            },
+            mouseout: e => {
+                let layer = e.target;
+                layer.setStyle(countyStyle);
+                if (prevLayerClicked !== null) {
+                  prevLayerClicked.setStyle(countySelectedStyle);
+                }
+                layer.bringToFront();
+
+            },
+            click: e => {
+                // Get selected county name
+                let selectedCounty = `${feature.properties.NAME}`;
+
+                // Update panel header with county/state name
+                d3.select('.panel-title').text(`${feature.properties.NAME} County, ${selectedState}`);
+
+                // Create and display marker clusters for schools within selected county
+                showSchoolMarkers(selectedState, selectedCounty);
+
+                // Reset the state layer to default
+                stateLayer.setStyle(stateStyle);
+
+                // Check if a county was selected before and reset its style
+                if (prevLayerClicked !== null) {
+                  prevLayerClicked.setStyle(countyStyle);
+                }
+
+                // Adjust selected county style
+                let layer = e.target;
+                layer.setStyle(countySelectedStyle);
+
+                layer.bringToFront();
+                
+                // Zoom to fit county boundaries
+                map.fitBounds(layer.getBounds());
+                
+                // Store current selection for later restyling
+                prevLayerClicked = layer;
+            }
+            }).bindPopup(`${feature.properties.NAME} County`);
+      }
+  });
+
+  // Add leaflet geojson layer to existing countyLayer
+  countyLayer.addLayer(counties);
+
+  // Remove any existing county layers
+  layerControl.removeLayer(countyLayer);
+  // Add county layer to layer control
+  layerControl.addOverlay(countyLayer, "Counties");
+  // Add county layer to map
+  map.addLayer(countyLayer);
+}
 
 function addMarkers(data) {
-    // markers.clearLayers();
+  // markers.clearLayers();
 
-    data.features.forEach(element => {
-        // console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
-        // Add each location as individual marker with popup info
-        
-        schoolMarker = L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
-                          .on({
-                          mouseover: e => {
-                              e.target.setIcon(bigIcon);
-                          },
-                          mouseout: e => 
-                              e.target.setIcon(schoolIcon)
-                          }).bindPopup(`<h3>${element.attributes.SCH_NAME}</h3><hr>
-                                      <h5>${element.attributes.LCITY}, ${element.attributes.LSTATE}</h5>
-                                      <p>Level: ${element.attributes.SCHOOL_LEVEL}<br>
-                                      Student Population: ${element.attributes.TOTAL}<br>
-                                      Total Free/Reduced Lunch: ${element.attributes.TOTFRL}<br>
-                                      % Free/Reduced Lunch: ${((element.attributes.TOTFRL/element.attributes.TOTAL)*100).toFixed(2)}%</p>`
-                          )
-        markers.addLayer(schoolMarker);
+  data.features.forEach(element => {
+      // console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
+      // Add each location as individual marker with popup info
+      
+      schoolMarker = L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
+                        .on({
+                        mouseover: e => {
+                            e.target.setIcon(bigIcon);
+                        },
+                        mouseout: e => 
+                            e.target.setIcon(schoolIcon)
+                        }).bindPopup(`<h3>${element.attributes.SCH_NAME}</h3><hr>
+                                    <h5>${element.attributes.LCITY}, ${element.attributes.LSTATE}</h5>
+                                    <p>Level: ${element.attributes.SCHOOL_LEVEL}<br>
+                                    Student Population: ${element.attributes.TOTAL}<br>
+                                    Total Free/Reduced Lunch: ${element.attributes.TOTFRL}<br>
+                                    % Free/Reduced Lunch: ${((element.attributes.TOTFRL/element.attributes.TOTAL)*100).toFixed(2)}%</p>`
+                        )
+      markers.addLayer(schoolMarker);
 
-        // Add coordinates to schoolLocations for heat map                
-        schoolLocations.push([element.geometry.y, element.geometry.x]);
-    }); // End ForEach
-    // console.log("AddMARKERS FUNCTION:", markers);
-    markers.addTo(myMap);
-    
+      // Add coordinates to schoolLocations for heat map                
+      schoolLocations.push([element.geometry.y, element.geometry.x]);
+  }); // End ForEach
+  // console.log("AddMARKERS FUNCTION:", markers);
+  markers.addTo(myMap);
+  
 }
+
+let prevLayerClicked = null;
+
+
+///// Initialize Map
+
+// States Layer
+let stateLayer = L.geoJson(statesData, {
+    style: stateStyle,
+    onEachFeature: onEachState
+});
+
+// Create base and overlay maps
+let baseMaps = {
+    Toner: toner,
+    CyclOSM: cyclosm
+}
+
+
+let overlayMaps = {
+    States: stateLayer
+}
+
+// Create the map object
+let myMap = L.map("map", {
+    center: [40.2659, -96.7467],
+    zoom: 3,
+    layers: [toner, stateLayer]
+    });
+
+// Create layer group to store county boundary layers 
+let countyLayer = L.layerGroup();
+
+// Add layer control
+let layerControl = L.control.layers(baseMaps, overlayMaps, {
+    collapsed: false
+}).addTo(myMap);
+
+// Create icons for school markers
+let schoolIcon = L.icon({
+    iconUrl: 'education.png',
+    iconSize:     [40, 40], // size of the icon
+    iconAnchor:   [20, 40], // point of the icon which will correspond to marker's location
+    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
+});
+// Create icons for school markers for mouseover
+let bigIcon = L.icon({
+    iconUrl: 'education.png',
+    iconSize:     [60, 60], // size of the icon
+    iconAnchor:   [30, 60], // point of the icon which will correspond to marker's location
+    popupAnchor:  [0, -50] // point from which the popup should open relative to the iconAnchor
+});
+
+// Create empty list to store school locations
+let schoolLocations = [];
+
+// Initialize the marker cluster group (will add markers in while loop)
+let markers = L.markerClusterGroup();
 
 myMap.invalidateSize();
 ///// Create function to initialize dashboard and create dropdown menu
