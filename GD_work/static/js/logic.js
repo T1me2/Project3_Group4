@@ -280,19 +280,26 @@ function showSchoolMarkers(state, county='') {
 
         if (stateCount <= 2000) {
             d3.json(url+stateQueryOffset).then(response => {
-                addMarkers(response)
+                addMarkers(response);
+                console.log("markers in showschoolmarkers", markers);
             });
         }
         else {
             while (schoolsRemaining > 0) {
                 stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
                 d3.json(url+stateQueryOffset).then(response => {
+                    // console.log(response);
                     addMarkers(response)
+                    console.log("markers in showschoolmarkers", markers);
                 });
 
                 offsetCount += 2000;
                 schoolsRemaining -= 2000;
+                
             }
+            // console.log(response);
+            console.log(state);
+            console.log(county);
         }
     });
 }
@@ -340,7 +347,7 @@ function showSchoolMarkersState(state) {
 
 
 function addMarkers(data) {
-    markers.clearLayers();
+    // markers.clearLayers();
 
     data.features.forEach(element => {
         // console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
