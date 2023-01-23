@@ -17,13 +17,13 @@ client = pymongo.MongoClient(conn)
 db = client.project3_group4
 collection = db.data
 
-result_list = []
+# result_list = []
 
 #create routes
-@app.route("/api/v1.0/project3/group4/data")
+@app.route("/api/v1.0/project3/group4/data", methods=['GET'])
 def group_data():
     """Return what we need to be json"""
-    # result_list = {}
+    result_list = []
     results = collection.find()
     for result in results:
         result_list.append(result)
