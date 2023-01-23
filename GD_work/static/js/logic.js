@@ -110,11 +110,14 @@ function showCounties(state, map) {
 
             },
             click: e => {
-              markers.clearLayers();
+                let selectedCounty = `${feature.properties.NAME}`
+                showSchoolMarkers(selectedState, selectedCounty);
+
+                markers.clearLayers();
                 stateLayer.setStyle(stateStyle);
 
                 if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(stateStyle);
+                  prevLayerClicked.setStyle(countyStyle);
                 }
 
                 let layer = e.target;
@@ -122,9 +125,8 @@ function showCounties(state, map) {
                 layer.bringToFront();
                 
                 map.fitBounds(layer.getBounds());
-                let selectedCounty = `${feature.properties.NAME}`
                 
-                showSchoolMarkers(selectedState, selectedCounty);
+                
                 prevLayerClicked = layer;
             }
             }).bindPopup(`${feature.properties.NAME} County`);
