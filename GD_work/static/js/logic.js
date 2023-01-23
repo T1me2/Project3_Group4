@@ -104,7 +104,7 @@ function showCounties(stateJson, map) {
                 let layer = e.target;
                 layer.setStyle(countyStyle);
                 if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(countyStyle);
+                  prevLayerClicked.setStyle(countySelectedStyle);
                 }
                 layer.bringToFront();
 
@@ -152,13 +152,11 @@ function onEachState(feature,layer) {
       mouseover: e => {
           let layer = e.target;
           layer.setStyle(stateHighlightStyle);
-          // layer.bringToFront();
           console.log("onEachState mouseover", layer);
       },
       mouseout: e => {
           stateLayer.setStyle(stateStyle);
           let layer = e.target;
-          // layer.setStyle(stateStyle);
           if (prevLayerClicked === null) {layer.bringToFront();}
          
           console.log("onEachState mouseout", layer);
