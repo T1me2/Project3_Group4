@@ -86,14 +86,66 @@ let countySelectedStyle = {
                             fillOpacity: 0.5
                           };
 
+
+function onEachState(feature,layer) {
+  // Identify selected state ID
+  let selectedStateId = feature.id;
+
+  // Retrieve current state abbreviation from dictionary
+  let selectedStateAbb = stateDict[feature.id]
+
+  // Filter countiesData geojson to only features within selected state
+  let selectedStateCounties = countiesData.features.filter(feature => {
+    return feature.properties.STATE === selectedStateId;
+  });
+
+  layer.on({
+      // Set state highlight style
+      mouseover: e => {
+          let layer = e.target;
+          layer.setStyle(stateHighlightStyle);
+      },
+
+      // Reset state style to default
+      mouseout: e => {
+          stateLayer.setStyle(stateStyle);
+          let layer = e.target;
+  
+          // if (prevLayerClicked === null) {layer.bringToFront();}
+      },
+
+      // Set state style when selected
+      click: e => {
+          let layer = e.target;
+          layer.setStyle(stateSelectedStyle);
+
+          // Update panel title to state abbr.
+          d3.select('.panel-title').text(selectedStateAbb);
+          
+          // Check for previously selected states and reset them
+          if (prevLayerClicked !== null) {
+            prevLayerClicked.setStyle(stateStyle);
+          }
+
+          // Zoom to fit state boundaries
+          myMap.fitBounds(e.target.getBounds());
+
+          // Store current selection for later restyling
+          prevLayerClicked = layer;
+
+          // Create/display county choropleth layer for selected state
+          showCounties(selectedStateCounties, myMap);
+
+          // Create markers for selected state
+          showSchoolMarkersState(selectedStateAbb);
+      }
+  });
+}
 // Display county choropleth when state is clicked
 function showCounties(stateJson, map) {
 
   let selectedStateId = stateJson[0].properties.STATE;
   let selectedState = stateDict[selectedStateId];
-  showSchoolMarkersState(selectedState);
-  // console.log("selectedState", selectedState);
-  
 
   countyLayer.clearLayers();
   let counties = L.geoJson(stateJson, {
@@ -117,94 +169,60 @@ function showCounties(stateJson, map) {
 
             },
             click: e => {
+                // Get selected county name
                 let selectedCounty = `${feature.properties.NAME}`;
 
+                // Update panel header with county/state name
                 d3.select('.panel-title').text(`${feature.properties.NAME} County, ${selectedState}`);
 
-
+                // Create and display marker clusters for schools within selected county
                 showSchoolMarkers(selectedState, selectedCounty);
 
+                // Reset the state layer to default
                 stateLayer.setStyle(stateStyle);
 
+                // Check if a county was selected before and reset its style
                 if (prevLayerClicked !== null) {
                   prevLayerClicked.setStyle(countyStyle);
                 }
 
+                // Adjust selected county style
                 let layer = e.target;
                 layer.setStyle(countySelectedStyle);
+
                 layer.bringToFront();
                 
+                // Zoom to fit county boundaries
                 map.fitBounds(layer.getBounds());
                 
-                
-                
+                // Store current selection for later restyling
                 prevLayerClicked = layer;
             }
             }).bindPopup(`${feature.properties.NAME} County`);
       }
   });
+
+  // Add leaflet geojson layer to existing countyLayer
   countyLayer.addLayer(counties);
+
+  // Remove any existing county layers
   layerControl.removeLayer(countyLayer);
+  // Add county layer to layer control
   layerControl.addOverlay(countyLayer, "Counties");
+  // Add county layer to map
   map.addLayer(countyLayer);
 }
 
-
-function onEachState(feature,layer) {
-  // Identify current state
-  let selectedStateId = feature.id;
-
-  // Retrieve current state ID number from dictionary
-  let selectedStateAbb = stateDict[feature.id]
-
-  
-  let selectedStateCounties = countiesData.features.filter(feature => {
-    return feature.properties.STATE === selectedStateId;
-  });
-
-  layer.on({
-      mouseover: e => {
-          let layer = e.target;
-          layer.setStyle(stateHighlightStyle);
-      },
-      mouseout: e => {
-          stateLayer.setStyle(stateStyle);
-          let layer = e.target;
-          if (prevLayerClicked === null) {layer.bringToFront();}
-      },
-      click: e => {
-          let layer = e.target;
-          layer.setStyle(stateSelectedStyle);
-          d3.select('.panel-title').text(selectedStateAbb);
-          
-          if (prevLayerClicked !== null) {
-            prevLayerClicked.setStyle(stateStyle);
-          }
-
-          myMap.fitBounds(e.target.getBounds());
-          prevLayerClicked = layer;
-
-          // Create/display county choropleth layer for selected state
-          showCounties(selectedStateCounties, myMap);
-
-          // Create markers for selected state
-          showSchoolMarkersState(selectedStateAbb);
-      }
-  });
-}
-
 let prevLayerClicked = null;
+
+
+///// Initialize Map
 
 // States Layer
 let stateLayer = L.geoJson(statesData, {
     style: stateStyle,
     onEachFeature: onEachState
 });
-
-// let heat = L.heatLayer(locations, {
-//     radius:30,
-//     blur:10
-//   });
 
 // Create base and overlay maps
 let baseMaps = {
@@ -224,6 +242,7 @@ let myMap = L.map("map", {
     layers: [toner, stateLayer]
     });
 
+// Create layer group to store county boundary layers 
 let countyLayer = L.layerGroup();
 
 // Add layer control
@@ -231,21 +250,19 @@ let layerControl = L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
 }).addTo(myMap);
 
-
-
 // Create icons for school markers
 let schoolIcon = L.icon({
     iconUrl: 'education.png',
     iconSize:     [40, 40], // size of the icon
-    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    iconAnchor:   [20, 40], // point of the icon which will correspond to marker's location
+    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
 });
 // Create icons for school markers for mouseover
 let bigIcon = L.icon({
     iconUrl: 'education.png',
-    iconSize:     [80, 80], // size of the icon
-    iconAnchor:   [40, 130], // point of the icon which will correspond to marker's location
-    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    iconSize:     [60, 60], // size of the icon
+    iconAnchor:   [30, 60], // point of the icon which will correspond to marker's location
+    popupAnchor:  [0, -50] // point from which the popup should open relative to the iconAnchor
 });
 
 // Create empty list to store school locations
@@ -403,3 +420,11 @@ myMap.invalidateSize();
 //   }
   
   // createDropdownMenu();
+
+
+//   let heat = L.heatLayer(schoolLocations, {
+//     radius:30,
+//     blur:10
+//   }).addTo(myMap);
+
+// layerControl.addOverlay(heat, "Heat");
