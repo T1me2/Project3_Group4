@@ -16,6 +16,12 @@ let stateNames = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'G
 // Define the street and toner tile layers
 let toner = new L.StamenTileLayer("toner-lite");
 
+let cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+  minZoom: 0,
+  maxZoom: 20,
+});
+
 
 // Define color function for county walkability choropleth 
 function getCountyColor(walkInd) {
@@ -111,7 +117,11 @@ function showCounties(stateJson, map) {
 
             },
             click: e => {
-                let selectedCounty = `${feature.properties.NAME}`
+                let selectedCounty = `${feature.properties.NAME}`;
+
+                d3.select('.panel-title').text(`${feature.properties.NAME} County, ${selectedState}`);
+
+
                 showSchoolMarkers(selectedState, selectedCounty);
 
                 stateLayer.setStyle(stateStyle);
@@ -126,7 +136,7 @@ function showCounties(stateJson, map) {
                 
                 map.fitBounds(layer.getBounds());
                 
-                d3.select('.panel-primary').text(`${feature.properties.NAME} County, ${selectedState}`);
+                
                 
                 prevLayerClicked = layer;
             }
@@ -134,6 +144,8 @@ function showCounties(stateJson, map) {
       }
   });
   countyLayer.addLayer(counties);
+  layerControl.removeLayer(countyLayer);
+  layerControl.addOverlay(countyLayer, "Counties");
   map.addLayer(countyLayer);
 }
 
@@ -163,6 +175,7 @@ function onEachState(feature,layer) {
       click: e => {
           let layer = e.target;
           layer.setStyle(stateSelectedStyle);
+          d3.select('.panel-title').text(selectedStateAbb);
           
           if (prevLayerClicked !== null) {
             prevLayerClicked.setStyle(stateStyle);
@@ -170,9 +183,6 @@ function onEachState(feature,layer) {
 
           myMap.fitBounds(e.target.getBounds());
           prevLayerClicked = layer;
-
-
-          d3.select('.panel-primary').text(selectedStateAbb);
 
           // Create/display county choropleth layer for selected state
           showCounties(selectedStateCounties, myMap);
@@ -198,13 +208,13 @@ let stateLayer = L.geoJson(statesData, {
 
 // Create base and overlay maps
 let baseMaps = {
-    Toner: toner
+    Toner: toner,
+    CyclOSM: cyclosm
 }
 
 
 let overlayMaps = {
-    States: stateLayer,
-    // Counties: countyLayer
+    States: stateLayer
 }
 
 // Create the map object
@@ -357,10 +367,10 @@ function addMarkers(data) {
     }); // End ForEach
     // console.log("AddMARKERS FUNCTION:", markers);
     markers.addTo(myMap);
-    // layerControl.addOverlay(markers, "Schools");
+    
 }
 
-
+myMap.invalidateSize();
 ///// Create function to initialize dashboard and create dropdown menu
 // function createDropdownMenu() {
 //     // Loop through sample data to add sample IDs to dropdown menu
@@ -386,6 +396,3 @@ function addMarkers(data) {
 //   }
   
   // createDropdownMenu();
-
-
-  
