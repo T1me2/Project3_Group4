@@ -13,9 +13,10 @@ let stateNames = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 'G
                   'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA',
                   'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
 
-// Define the street and toner tile layers
+// Define toner tile baselayer
 let toner = new L.StamenTileLayer("toner-lite");
 
+// Create CyclOSM tile baselayer
 let cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
   attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
   minZoom: 0,
@@ -91,32 +92,33 @@ function getCountyColor(walkInd) {
 }
 
 
+// Create function to define actions when each state feature is clicked
 function onEachState(feature,layer) {
-  // Identify selected state ID
-//   let selectedStateId = feature.id;
+
+  // Identify which state ID was just selected
   let selectedStateId = feature.properties.GEO_ID.slice(-2);
 
   // Retrieve current state abbreviation from dictionary
   let selectedStateAbb = stateDict[selectedStateId];
 
-  // Filter countiesData geojson to only features within selected state
+  // Filter countiesData geojson to only county features within selected state
   let selectedStateCounties = countiesData.features.filter(feature => {
     return feature.properties.STATE === selectedStateId;
   });
 
+  // Define actions for interacting with state feature
   layer.on({
-      // Set state highlight style
+
+      // Set state highlight style on hover
       mouseover: e => {
-          let layer = e.target;
+        //   let layer = e.target;
           layer.setStyle(stateHighlightStyle);
       },
 
-      // Reset state style to default
+      // Reset state style when hover 
       mouseout: e => {
           stateLayer.setStyle(stateStyle);
-          let layer = e.target;
-  
-          // if (prevLayerClicked === null) {layer.bringToFront();}
+        //   let layer = e.target;
       },
 
       // Set state style when selected
@@ -133,7 +135,7 @@ function onEachState(feature,layer) {
           }
 
           // Zoom to fit state boundaries
-          myMap.fitBounds(e.target.getBounds());
+          myMap.fitBounds(layer.getBounds());
 
           // Store current selection for later restyling
           prevLayerClicked = layer;
@@ -147,7 +149,7 @@ function onEachState(feature,layer) {
   });
 }
 
-function showSchoolMarkers(state, county='') {
+function showSchoolMarkersCounty(state, county='') {
   // console.log("SHOW SCHOOL MARKERS:",state, county)
     markers.clearLayers();
     const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
@@ -166,12 +168,13 @@ function showSchoolMarkers(state, county='') {
     let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
     let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
 
-    d3.json(url+stateIdsOnly).then(data => {
+    d3.json(url+stateQueryOffset).then(data => {
+        
+          let schoolCount = data.features.length;
+          let schoolsRemaining = schoolCount;
+        //   console.log("count schools",schoolCount);
 
-        let stateCount = data.objectIds.length;
-        let schoolsRemaining = stateCount;
-
-        if (stateCount <= 2000) {
+        if (schoolCount <= 2000) {
             d3.json(url+stateQueryOffset).then(response => {
                 addMarkers(response);
                 console.log("markers in showschoolmarkers", markers);
@@ -216,10 +219,10 @@ function showSchoolMarkersState(state) {
 
   d3.json(url+stateIdsOnly).then(data => {
 
-      let stateCount = data.objectIds.length;
-      let schoolsRemaining = stateCount;
+      let schoolCount = data.objectIds.length;
+      let schoolsRemaining = schoolCount;
 
-      if (stateCount <= 2000) {
+      if (schoolCount <= 2000) {
           d3.json(url+stateQueryOffset).then(response => {
               addMarkers(response)
           });
@@ -273,7 +276,7 @@ function showCounties(stateJson, map) {
                 d3.select('.panel-title').text(`${feature.properties.NAME} County, ${selectedState}`);
 
                 // Create and display marker clusters for schools within selected county
-                showSchoolMarkers(selectedState, selectedCounty);
+                showSchoolMarkersCounty(selectedState, selectedCounty);
 
                 // Reset the state layer to default
                 stateLayer.setStyle(stateStyle);
