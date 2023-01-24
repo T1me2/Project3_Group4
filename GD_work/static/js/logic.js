@@ -334,8 +334,8 @@ function showCounties(stateJson, map) {
                 d3.select(".panel-title").text(`${feature.properties.NAME} County, ${selectedState}`);
 
                 // Create and display marker clusters for schools within selected county
-                // showSchoolMarkers(selectedState, selectedCounty);
                 showSchoolMarkersCounty(selectedState, selectedCounty);
+                // showSchoolMarkers(selectedState, selectedCounty);
 
                 // Reset the state layer to default
                 stateLayer.setStyle(stateStyle);
@@ -506,7 +506,7 @@ myMap.invalidateSize();
 
 
 
-
+/// ATTEMPT to combine two functions into one
 // Show school marker clusters when county is selected
 function showSchoolMarkers(state, county='') {
     // Clear any existing marker cluster layer
@@ -561,3 +561,13 @@ function showSchoolMarkers(state, county='') {
         schoolsRemaining -= 2000;
     }
 }
+
+
+
+
+
+d3.csv("walkability.csv",function(data){
+    console.log(data);
+},function(error, rows){
+   console.log(rows); 
+});

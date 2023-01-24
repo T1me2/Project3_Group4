@@ -15,8 +15,6 @@ function showSchoolMarkers(state, county='') {
     // Set default for current length of api return call (can only do 2000 at a time)
     let offsetCount = 0;
 
-    
-
     // Define base URL for Public School API call
     const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
   
@@ -32,6 +30,10 @@ function showSchoolMarkers(state, county='') {
         // Initialize number of schools left to check
         let schoolsRemaining = schoolCount;
         
+        // Clear existing county school count text in panel-body
+        d3.select("#county-school-count").text('');
+        // Update panel-body to show total school count for selected state
+        d3.select("#state-school-count").text(`${schoolsRemaining} schools in ${state}`);
         // Update panel-body with school count for selected county
         d3.select("#county-school-count").text(`${schoolCount} schools in ${county}`);
 
