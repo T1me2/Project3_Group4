@@ -566,8 +566,8 @@ function showSchoolMarkers(state, county='') {
 
 
 
-d3.csv("walkability.csv",function(data){
-    console.log(data);
-},function(error, rows){
-   console.log(rows); 
-});
+// d3.csv("walkability.csv",function(data){
+//     console.log(data);
+// },function(error, rows){
+//    console.log(rows); 
+// });
