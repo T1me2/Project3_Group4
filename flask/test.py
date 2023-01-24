@@ -14,21 +14,24 @@ conn = "mongodb+srv://project3_group4:project3_group4@cluster0.a6d7ysg.mongodb.n
 client = pymongo.MongoClient(conn)
 
 #select db and collection to use
-db = client.project3_group4
+db = client.project3_data
 collection = db.data
 
-# result_list = []
-
-#create routes
-@app.route("/api/v1.0/project3/group4/data", methods=['GET'])
+@app.route("/api/v1.0/project3/group4/data")
 def group_data():
     """Return what we need to be json"""
+    
     result_list = []
     results = collection.find()
+    print('abc')
     for result in results:
+        del result['_id']
         result_list.append(result)
+    real_list = {"type": "FeatureCollection",
+"features": result_list}
+    return jsonify(real_list)
+
     
-    return jsonify(result_list)
     
     
 
@@ -36,6 +39,7 @@ def group_data():
 
 @app.route("/")
 def welcome ():
+    print("testest")
     return(
         f"Welcome to group 3's Flask API home page <br/>"
         f"Available Routes: <br/>"
