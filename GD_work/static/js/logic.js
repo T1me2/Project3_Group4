@@ -144,17 +144,15 @@ function onEachState(feature,layer) {
           showCounties(selectedStateCounties, myMap);
 
           // Create markers for selected state
-          showSchoolMarkersState(selectedStateAbb);
+          showSchoolMarkers(selectedStateAbb);
       }
   });
 }
 
-function showSchoolMarkersCounty(state, county='') {
-  // console.log("SHOW SCHOOL MARKERS:",state, county)
+function showSchoolMarkers(state, county='') {
     markers.clearLayers();
+
     const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
-    if (county !== '') {county = `${county} County`}
-    // console.log("Inside showschoolmarkers",county);
 
     // Initialize first indices of each "page" to 0 and 1999
     let firstIndex = 0;
@@ -165,80 +163,69 @@ function showSchoolMarkersCounty(state, county='') {
     let offsetCount = 0;
 
     const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
-    let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
-    let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
 
-    d3.json(url+stateQueryOffset).then(data => {
+    // Check if county was selected
+    if (county !== '') {county = `${county} County`
+        // Define query to public school API for selected state and county
+        let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
+        // Define query with offset count (when more than 2000 school features returned)
+        let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+
+        // Make initial call to API to check how many
+        d3.json(url+stateQueryOffset).then(data => {
+
+            stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
         
-          let schoolCount = data.features.length;
-          let schoolsRemaining = schoolCount;
-        //   console.log("count schools",schoolCount);
+            let schoolCount = data.features.length;
+            let schoolsRemaining = schoolCount;
 
-        if (schoolCount <= 2000) {
-            d3.json(url+stateQueryOffset).then(response => {
-                addMarkers(response);
-                console.log("markers in showschoolmarkers", markers);
-            });
-        }
-        else {
-            while (schoolsRemaining > 0) {
-                stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+            if (schoolCount <= 2000) {
                 d3.json(url+stateQueryOffset).then(response => {
-                    // console.log(response);
-                    addMarkers(response)
-                    console.log("markers in showschoolmarkers", markers);
+                    addMarkers(response);
+                    console.log(response);
                 });
-
-                offsetCount += 2000;
-                schoolsRemaining -= 2000;
-                
             }
-            // console.log(response);
-            console.log(state);
-            console.log(county);
-        }
-    });
-}
+            else {
+                while (schoolsRemaining > 0) {
+                    d3.json(url+stateQueryOffset).then(response => {
+                        addMarkers(response)
+                    });
 
-function showSchoolMarkersState(state) {
-  markers.clearLayers();
+                    offsetCount += 2000;
+                    schoolsRemaining -= 2000;
+                    
+                }
+                // console.log(response);
+                console.log(state);
+                console.log(county);
+            }
+        });
+    }
+    // When only a state is selected
+    else { 
+        d3.json(url+stateIdsOnly).then(data => {
 
-  const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
-
-  // Initialize first indices of each "page" to 0 and 1999
-  let firstIndex = 0;
-  let lastIndex = 2000;
-
-  // Set default for current length of api return call (can only do 2000 at a time)
-  let currentLength = 2000;
-  let offsetCount = 0;
-
-  const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
-  let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
-  let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
-
-  d3.json(url+stateIdsOnly).then(data => {
-
-      let schoolCount = data.objectIds.length;
-      let schoolsRemaining = schoolCount;
-
-      if (schoolCount <= 2000) {
-          d3.json(url+stateQueryOffset).then(response => {
-              addMarkers(response)
-          });
-      }
-      else {
-          while (schoolsRemaining > 0) {
-              stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
-              d3.json(url+stateQueryOffset).then(response => {
-                  addMarkers(response)
-              });
-
-              offsetCount += 2000;
-              schoolsRemaining -= 2000;
-          }
-      }
-  });
+            let schoolCount = data.objectIds.length;
+            let schoolsRemaining = schoolCount;
+    
+            if (schoolCount <= 2000) {
+                d3.json(url+stateQueryOffset).then(response => {
+                    addMarkers(response)
+                });
+            }
+            else {
+                while (schoolsRemaining > 0) {
+                    stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+                    d3.json(url+stateQueryOffset).then(response => {
+                        addMarkers(response)
+                    });
+    
+                    offsetCount += 2000;
+                    schoolsRemaining -= 2000;
+                }
+            }
+        });
+    }
 }
 
 // Display county choropleth when state is clicked
@@ -276,7 +263,7 @@ function showCounties(stateJson, map) {
                 d3.select('.panel-title').text(`${feature.properties.NAME} County, ${selectedState}`);
 
                 // Create and display marker clusters for schools within selected county
-                showSchoolMarkersCounty(selectedState, selectedCounty);
+                showSchoolMarkers(selectedState, selectedCounty);
 
                 // Reset the state layer to default
                 stateLayer.setStyle(stateStyle);
@@ -436,3 +423,7 @@ myMap.invalidateSize();
 //   }).addTo(myMap);
 
 // layerControl.addOverlay(heat, "Heat");
+
+
+
+
