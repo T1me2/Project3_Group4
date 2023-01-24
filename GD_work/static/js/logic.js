@@ -1,3 +1,4 @@
+// Dictionary to convert state codes to state abbreviations
 let stateDict = {'01':'AL', '02':'AK', '04':'AZ', '05':'AR', '06':'CA', '08':'CO', '09':'CT', '10':'DE', 
                 '11':'DC', '12':'FL', '13':'GA', '15':'HI', '16':'ID', '17':'IL', '18':'IN', '19':'IA', 
                 '20':'KS', '21':'KY', '22':'LA', '23':'ME','24':'MD', '25':'MA', '26':'MI', '27':'MN', 
@@ -7,7 +8,7 @@ let stateDict = {'01':'AL', '02':'AK', '04':'AZ', '05':'AR', '06':'CA', '08':'CO
                 '53':'WA', '54':'WV', '55':'WI', '56':'WY'
 };
 
-// Create dictionary of state abbreviations 
+// Dictionary to convert state abbreviations to full names
 let stateNames = {
     'AK': 'Alaska',
     'AL': 'Alabama',
@@ -114,6 +115,7 @@ let countyStyle = {
                     dashArray: '',
                     fillOpacity: 0.7
                   };
+
 // Set county style for mouseover
 let countyHighlightStyle = {
                             fillColor: 'rgb(65,182,196)',
@@ -166,14 +168,12 @@ function onEachState(feature,layer) {
 
       // Set state highlight style on hover
       mouseover: e => {
-        //   let layer = e.target;
           layer.setStyle(stateHighlightStyle);
       },
 
       // Reset state style when hover 
       mouseout: e => {
           stateLayer.setStyle(stateStyle);
-        //   let layer = e.target;
       },
 
       // Set state style when selected
@@ -200,14 +200,12 @@ function onEachState(feature,layer) {
 
           // Create markers for selected state
           showSchoolMarkersState(selectedStateAbb);
-        //   showSchoolMarkers(selectedStateAbb);
       }
   });
 }
 
 // Show school marker clusters when county is selected
 function showSchoolMarkersCounty(state, county='') {
-    // console.log("SHOW SCHOOL MARKERS:",state, county)
       markers.clearLayers();
 
       d3.select("#county-school-count").text('');
@@ -265,41 +263,29 @@ function showSchoolMarkersCounty(state, county='') {
     // d3.select("#state-school-count").text(`${schoolCount} schools in ${state}`);
   
     const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`;
-  
-    // Initialize first indices of each "page" to 0 and 1999
-    let firstIndex = 0;
-  
+
     // Set default for current length of api return call (can only do 2000 at a time)
     let offsetCount = 0;
   
     const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
-    let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
+    let stateQuery = `query?where=LSTATE%20%3D%20'${state}'&&outFields=*&outSR=4326&f=json`;
     let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
   
     d3.json(url+stateIdsOnly).then(data => {
   
-        let schoolCount = data.objectIds.length;
-        let schoolsRemaining = schoolCount;
+        let schoolsRemaining = data.objectIds.length;
         d3.select("#county-school-count").text('');
-        d3.select("#state-school-count").text(`${schoolCount} schools in ${state}`);
-  
-        if (schoolCount <= 2000) {
+        d3.select("#state-school-count").text(`${schoolsRemaining} schools in ${state}`);
+
+        while (schoolsRemaining > 0) {
+            stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+            
             d3.json(url+stateQueryOffset).then(response => {
                 addMarkers(response);
+                console.log("D3schoolsRemaining", schoolsRemaining)
             });
-        }
-        else {
-            while (schoolsRemaining > 0) {
-                stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
-                
-                d3.json(url+stateQueryOffset).then(response => {
-                    addMarkers(response);
-                    console.log("D3schoolsRemaining", schoolsRemaining)
-                });
-  
-                offsetCount += 2000;
-                schoolsRemaining -= 2000;
-            }
+            offsetCount += 2000;
+            schoolsRemaining -= 2000;
         }
     });
   }
@@ -538,7 +524,7 @@ let overlayMaps = {
 let myMap = L.map("map", {
     center: [40.2659, -96.7467],
     zoom: 3,
-    layers: [toner, stateLayer]
+    layers: [cyclosm, stateLayer]
     });
 
 // Create layer group to store county boundary layers 
