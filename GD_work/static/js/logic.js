@@ -149,6 +149,7 @@ function onEachState(feature,layer) {
   });
 }
 
+// Make API call to public school dataset for selected state/county and display on map
 function showSchoolMarkers(state, county='') {
     markers.clearLayers();
 
@@ -181,6 +182,7 @@ function showSchoolMarkers(state, county='') {
 
             if (schoolCount <= 2000) {
                 d3.json(url+stateQueryOffset).then(response => {
+                    // Call addMarkers to create marker cluster layer from API response
                     addMarkers(response);
                     console.log(response);
                 });
@@ -188,6 +190,7 @@ function showSchoolMarkers(state, county='') {
             else {
                 while (schoolsRemaining > 0) {
                     d3.json(url+stateQueryOffset).then(response => {
+                        // Call addMarkers to create marker cluster layer from API response
                         addMarkers(response)
                     });
 
@@ -210,6 +213,7 @@ function showSchoolMarkers(state, county='') {
     
             if (schoolCount <= 2000) {
                 d3.json(url+stateQueryOffset).then(response => {
+                    // Call addMarkers to create marker cluster layer from API response
                     addMarkers(response)
                 });
             }
@@ -217,6 +221,7 @@ function showSchoolMarkers(state, county='') {
                 while (schoolsRemaining > 0) {
                     stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
                     d3.json(url+stateQueryOffset).then(response => {
+                        // Call addMarkers to create marker cluster layer from API response
                         addMarkers(response)
                     });
     
@@ -300,14 +305,29 @@ function showCounties(stateJson, map) {
   map.addLayer(countyLayer);
 }
 
+// Create markers from Public School data (function takes in and parses geoJSON data)
 function addMarkers(data) {
-  // markers.clearLayers();
+  // Create icons for school markers
+    let schoolIcon = L.icon({
+        iconUrl: 'education.png',
+        iconSize:     [40, 40], // size of the icon
+        iconAnchor:   [20, 40], // point of the icon which will correspond to marker's location
+        popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
+    });
 
-  data.features.forEach(element => {
+    // Create icons for school markers for mouseover
+    let bigIcon = L.icon({
+        iconUrl: 'education.png',
+        iconSize:     [60, 60], // size of the icon
+        iconAnchor:   [30, 60], // point of the icon which will correspond to marker's location
+        popupAnchor:  [0, -50] // point from which the popup should open relative to the iconAnchor
+    });
+
+    data.features.forEach(element => {
       // console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
       // Add each location as individual marker with popup info
       
-      schoolMarker = L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
+        schoolMarker = L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
                         .on({
                         mouseover: e => {
                             e.target.setIcon(bigIcon);
@@ -321,13 +341,14 @@ function addMarkers(data) {
                                     Total Free/Reduced Lunch: ${element.attributes.TOTFRL}<br>
                                     % Free/Reduced Lunch: ${((element.attributes.TOTFRL/element.attributes.TOTAL)*100).toFixed(2)}%</p>`
                         )
-      markers.addLayer(schoolMarker);
+        markers.addLayer(schoolMarker);
 
-      // Add coordinates to schoolLocations for heat map                
-      schoolLocations.push([element.geometry.y, element.geometry.x]);
-  }); // End ForEach
-  // console.log("AddMARKERS FUNCTION:", markers);
-  markers.addTo(myMap);
+        // Add coordinates to schoolLocations for heat map                
+        schoolLocations.push([element.geometry.y, element.geometry.x]);
+    }); // End ForEach
+
+    // console.log("AddMARKERS FUNCTION:", markers);
+    markers.addTo(myMap);
   
 }
 
@@ -367,21 +388,6 @@ let countyLayer = L.layerGroup();
 let layerControl = L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
 }).addTo(myMap);
-
-// Create icons for school markers
-let schoolIcon = L.icon({
-    iconUrl: 'education.png',
-    iconSize:     [40, 40], // size of the icon
-    iconAnchor:   [20, 40], // point of the icon which will correspond to marker's location
-    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
-});
-// Create icons for school markers for mouseover
-let bigIcon = L.icon({
-    iconUrl: 'education.png',
-    iconSize:     [60, 60], // size of the icon
-    iconAnchor:   [30, 60], // point of the icon which will correspond to marker's location
-    popupAnchor:  [0, -50] // point from which the popup should open relative to the iconAnchor
-});
 
 // Create empty list to store school locations
 let schoolLocations = [];
