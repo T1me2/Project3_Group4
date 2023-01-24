@@ -79,11 +79,11 @@ let countySelectedStyle = {
 
 // Define color function for county walkability choropleth 
 function getCountyColor(walkInd) {
-  return walkInd > 16 ? '#810f7c' :
-         walkInd > 12 ? '#8856a7' :
-         walkInd > 8  ? '#8c96c6' :
-         walkInd > 4  ? '#b3cde3' :
-                        '#edf8fb' ;
+        return walkInd > 16 ? '#810f7c' :
+                walkInd > 12 ? '#8856a7' :
+                walkInd > 8  ? '#8c96c6' :
+                walkInd > 4  ? '#b3cde3' :
+                                '#edf8fb' ;
 
   //rgb("244,200,96") //least walkable (1-5.75)
   //rgb("255,255,163") //below avg walkable (5.76-10.5)
@@ -149,7 +149,7 @@ function onEachState(feature,layer) {
       }
   });
 }
-function showSchoolMarkers(state, county='') {
+function showSchoolMarkersCounty(state, county='') {
     // console.log("SHOW SCHOOL MARKERS:",state, county)
       markers.clearLayers();
       const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`
