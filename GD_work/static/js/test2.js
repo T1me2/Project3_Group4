@@ -1,65 +1,53 @@
 // Show school marker clusters when county is selected
-function showSchoolMarkersCounty(state, county='') {
-    // console.log("SHOW SCHOOL MARKERS:",state, county)
-      markers.clearLayers();
-      d3.select("#county-school-count").text('');
+function showSchoolMarkers(state, county='') {
+    // Clear any existing marker cluster layer
+    markers.clearLayers();
 
-      const stateIdsOnly = `query?where=LSTATE%20%3D%20'${state}'&outFields=*&returnIdsOnly=true&outSR=4326&f=json`;
-      if (county !== '') {county = `${county} County`}
+    // Reset any existing county school count text in panel-body
+    d3.select("#county-school-count").text('');
   
-      // Initialize first indices of each "page" to 0 and 1999
-      let firstIndex = 0;
-      let lastIndex = 2000;
+    // Format county name to match public school API
+    if (county !== '') {
+        county = `${county} County`;
+        let countyParameter = `'%20AND%20NMCNTY%20%3D%20'${county}'`;
+    }
+
+    // Set default for current length of api return call (can only do 2000 at a time)
+    let offsetCount = 0;
+
+    
+
+    // Define base URL for Public School API call
+    const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
   
-      // Set default for current length of api return call (can only do 2000 at a time)
-      let currentLength = 2000;
-      let offsetCount = 0;
-  
-      const url = "https://services1.arcgis.com/Ua5sjt3LWTPigjyD/arcgis/rest/services/School_Characteristics_Current/FeatureServer/2/";
-      let stateQuery = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'%20AND%20OBJECTID>${firstIndex}&&outFields=*&outSR=4326&f=json`;
-      let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
-  
-      d3.json(url+stateQueryOffset).then(data => {
-            let schoolCount = data.features.length;
-            let schoolsRemaining = schoolCount;
-            let morePages = data.exceededTransferLimit;
+    // Define query to return school count for selected county
+    let countyCountQuery = `query?where=LSTATE%20%3D%20'${state}'${countyParameter}'&outFields=*&returnCountOnly=true&outSR=4326&f=json`;
+    // Define query for selected state with offset count parameter
+    let stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
 
-            let countySchoolCount = 0;
-
-            // Check if there are more than 2000 results
-            while (morePages){
-                countySchoolCount = 2000;
-                console.log("in if statement:", countySchoolCount);
-
-                    console.log("schoolsRemaining", schoolsRemaining)
-                    // console.log("in while statement:", countySchoolCount);
-                    stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
-                    
-                    // let fullResponse = [];
-                    d3.json(url+stateQueryOffset).then(response => {
-                        schoolsRemaining += response.features.length;
-                        console.log("schoolsRemaining", schoolsRemaining);
-                        // console.log("COUNT", schoolsRemaining);
-                        addMarkers(response);
-                        // console.log("data", response);
-                        // console.log("in d3:", countySchoolCount);
-                        // console.log("type", typeof response);
-                        
-                        // console.log("in d3:", schoolsRemaining);
-                        countySchoolCount += schoolsRemaining;
-                    });
-                    schoolsRemaining -= 2000;
-                    offsetCount += 2000;
-                        
-
-                //   d3.select("#county-school-count").text(`${countySchoolCount} schools in ${county}`);
-            }
-
-        countySchoolCount = schoolCount
-        d3.select("#county-school-count").text(`${countySchoolCount} schools in ${county}`);
+    // Make API call to get school count for selected county
+    d3.json(url+countyCountQuery).then(data => {
+        // Store school count (total number of schools in county)
+        let schoolCount = data.count;
+        // Initialize number of schools left to check
+        let schoolsRemaining = schoolCount;
         
-        addMarkers(data);
-        console.log("data", data);
+        // Update panel-body with school count for selected county
+        d3.select("#county-school-count").text(`${schoolCount} schools in ${county}`);
 
-        });
-  }
+        // Looop until no schools left to check
+        while (schoolsRemaining > 0) {
+            stateQueryOffset = `query?where=LSTATE%20%3D%20'${state}'%20AND%20NMCNTY%20%3D%20'${county}'&resultOffset=${offsetCount}&outFields=*&outSR=4326&f=json`;
+            // Reset query with updated offset count
+            d3.json(url+stateQueryOffset).then(response => {
+                // Create/display marker cluster layer of schools for selected state
+                addMarkers(response);
+            });
+
+            // Update offset count
+            offsetCount += 2000;
+            // Update number of schools left
+            schoolsRemaining -= 2000;
+        }
+    });
+}
