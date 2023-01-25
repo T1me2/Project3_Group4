@@ -29,7 +29,7 @@ def group_data():
     for result in results:
         del result['_id']
         result_list.append(result)
-    real_list = {{"type": "FeatureCollection", "features": result_list}}
+    real_list = {"type": "FeatureCollection", "features": result_list}
     return real_list
 
     
