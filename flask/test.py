@@ -8,6 +8,8 @@ from pymongo import MongoClient
 #create app
 app = Flask(__name__)
 
+app.config['JSON_SORT_KEYS'] = False
+
 #set up mongo atlas database connection
 conn = "mongodb+srv://project3_group4:project3_group4@cluster0.a6d7ysg.mongodb.net/?retryWrites=true&w=majority"
 # conn = "mongodb://localhost:27017"
@@ -23,13 +25,12 @@ def group_data():
     
     result_list = []
     results = collection.find()
-    print('abc')
+    # print('abc')
     for result in results:
         del result['_id']
         result_list.append(result)
-    real_list = {"type": "FeatureCollection",
-"features": result_list}
-    return jsonify(real_list)
+    real_list = {"type": "FeatureCollection", "features": result_list}
+    return real_list
 
     
     
