@@ -1,5 +1,6 @@
 #import Flask
 from flask import Flask, jsonify
+from flask_cors import CORS, cross_origin
 import pymongo 
 import json
 import pandas as pd
@@ -7,6 +8,7 @@ from pymongo import MongoClient
 
 #create app
 app = Flask(__name__)
+cors = CORS(app)
 
 app.config['JSON_SORT_KEYS'] = False
 
