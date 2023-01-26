@@ -22,9 +22,9 @@ async function addGeoJson() {
     L.geoJson(data).addTo(map);
 
     function getColor(walkInd) {
-        return walkInd > 12 ? '#810f7c' :
-                walkInd > 8 ? '#8856a7' :
-                walkInd > 4  ? '#8c96c6' :
+        return walkInd > 9 ? '#810f7c' :
+                walkInd > 7 ? '#8856a7' :
+                walkInd > 4 ? '#8c96c6' :
                 walkInd > 1  ? '#b3cde3' :
                                 '#edf8fb' ;
 }
