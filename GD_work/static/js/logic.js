@@ -109,6 +109,7 @@ let stateSelectedStyle = {
 // Set default style for county choropleth
 let countyStyle = {
                     fillColor: 'rgb(224,236,244)',
+                    // fillColor: getCountyColor,
                     weight: 2,
                     opacity: 1,
                     color: 'gray',
