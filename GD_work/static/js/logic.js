@@ -69,6 +69,8 @@ let stateNames = {
     'WY': 'Wyoming'
 }
 
+let walkability_scores = [0, 4, 8, 9, 13];
+
 // Define toner tile baselayer
 let toner = new L.StamenTileLayer("toner-lite");
 
@@ -153,8 +155,6 @@ return {
     fillOpacity: 0.8
 }
 };
-
-let walkability_scores = [0, 5, 6, 7, 12];
 
 // // Define color function for county walkability choropleth 
 function getCountyColor(walkInd) {
