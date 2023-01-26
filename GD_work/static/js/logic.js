@@ -120,20 +120,37 @@ let stateSelectedStyle = {
 
 
 // // Define color function for county walkability choropleth 
-// function getCountyColor(walkInd) {
-//         return walkInd > 16 ? '#810f7c' :
-//                 walkInd > 12 ? '#8856a7' :
-//                 walkInd > 8  ? '#8c96c6' :
-//                 walkInd > 4  ? '#b3cde3' :
-//                                 '#edf8fb' ;
-
 function getCountyColor(walkInd) {
-    return walkInd > 9 ? '#810f7c' :
-            walkInd > 7 ? '#8856a7' :
-            walkInd > 4 ? '#8c96c6' :
-            walkInd > 1  ? '#b3cde3' :
-                            '#edf8fb' ;
+        return walkInd > 15 ? '#2b83ba' :
+                walkInd > 12 ? '#abdda4' :
+                walkInd > 8  ? '#ffffbf' :
+                walkInd > 4  ? '#fdae61' :
+                                '#d7191c' ;
 }
+                
+//     return walkInd >18 ? '#a50026' :
+//             walkInd > 16 ? '#d73027' : 
+//             walkInd > 14 ? '#f46d43' :
+//             walkInd > 12 ? '#fdae61' :
+//             walkInd > 10 ? '#fee08b' :
+//             walkInd > 8 ? '#ffffbf' :
+//             walkInd > 6 ? '#66bd63' :
+//             walkInd > 4 ? '#a6d96a' :
+//             walkInd > 2 ? '#66bd63' :
+//                          '#1a9850' ;
+// }
+
+
+// function getCountyColor(walkInd) {
+//     return walkInd > 9 ? '#810f7c' :
+//             walkInd > 7 ? '#8856a7' :
+//             walkInd > 4 ? '#8c96c6' :
+//             walkInd > 1  ? '#b3cde3' :
+//                             '#edf8fb' ;
+// }
+
+            
+
 
   //rgb("244,200,96") //least walkable (1-5.75)
   //rgb("255,255,163") //below avg walkable (5.76-10.5)
@@ -307,12 +324,13 @@ function showSchoolMarkersCounty(state, county='') {
 
 
 // Display county choropleth when state is clicked
-function showCounties(selectedStateCounties, map) {
+function showCounties(selectedStateCounties) {
 
     let selectedStateId = selectedStateCounties[0].properties.STATE;
     let selectedState = stateDict[selectedStateId];
     // let walkabilityIndex = stateJson;
 
+    
     function style(feature) {
         return {
             fillColor: getCountyColor(feature.properties.walkability_score),
@@ -320,7 +338,7 @@ function showCounties(selectedStateCounties, map) {
             opacity: 1,
             color: 'gray',
             dashArray: '',
-            fillOpacity: 0.7
+            fillOpacity: 0.8
         };
     }
 
@@ -332,7 +350,7 @@ function showCounties(selectedStateCounties, map) {
             opacity: 1,
             color: 'gray',
             dashArray: '',
-            fillOpacity: 0.7
+            fillOpacity: 0.8
         }
     };
 
@@ -341,9 +359,9 @@ function showCounties(selectedStateCounties, map) {
         return {
             fillColor: getCountyColor(walkInd),
             weight: 5,
-            color: "gray",
+            color: "lightgray",
             dashArray: '',
-            fillOpacity: 0.7
+            fillOpacity: 0.6
         }   
     };
 
@@ -354,12 +372,12 @@ function showCounties(selectedStateCounties, map) {
             weight: 5,
             color: "gray",
             dashArray: '',
-            fillOpacity: 0.5
+            fillOpacity: 0.7
         }
     };
 
     countyLayer.clearLayers();
-    let counties = L.geoJson(selectedStateCounties, {
+    counties = L.geoJson(selectedStateCounties, {
         style: style,
 
         onEachFeature: (feature,layer) => {
@@ -374,7 +392,7 @@ function showCounties(selectedStateCounties, map) {
                     let layer = e.target;
                     layer.setStyle(countyStyle(feature.properties.walkability_score));
                     if (prevLayerClicked !== null) {
-                    prevLayerClicked.setStyle(countySelectedStyle(feature.properties.walkability_score));
+                        prevLayerClicked.setStyle(style);
                     }
                     layer.bringToFront();
 
@@ -382,6 +400,11 @@ function showCounties(selectedStateCounties, map) {
                 click: e => {
                     // Get selected county name
                     let selectedCounty = `${feature.properties.NAME}`;
+
+                    // layer.setStyle(style);
+                    // Adjust selected county style
+                    let layer = e.target;
+                    layer.setStyle(countySelectedStyle(feature.properties.walkability_score));
 
                     // Update panel header with county/state name
                     d3.select(".panel-title").text(`${feature.properties.NAME} County, ${selectedState}`);
@@ -395,20 +418,19 @@ function showCounties(selectedStateCounties, map) {
 
                     // Check if a county was selected before and reset its style
                     if (prevLayerClicked !== null) {
-                    prevLayerClicked.setStyle(countyStyle(feature.properties.walkability_score));
+                        prevLayerClicked.setStyle(countyStyle(prevWalkInd));
                     }
 
-                    // Adjust selected county style
-                    let layer = e.target;
-                    layer.setStyle(countySelectedStyle(feature.properties.walkability_score));
+                    
 
                     layer.bringToFront();
                     
                     // Zoom to fit county boundaries
-                    map.fitBounds(layer.getBounds());
+                    myMap.fitBounds(layer.getBounds());
                     
                     // Store current selection for later restyling
                     prevLayerClicked = layer;
+                    prevWalkInd = feature.properties.walkability_score
                 }
             }).bindPopup(`${feature.properties.NAME} County`);
         }
@@ -422,7 +444,7 @@ function showCounties(selectedStateCounties, map) {
   // Add county layer to layer control
   layerControl.addOverlay(countyLayer, "Counties");
   // Add county layer to map
-  map.addLayer(countyLayer);
+  myMap.addLayer(countyLayer);
 }
 
 
@@ -483,7 +505,7 @@ function addMarkers(data) {
 
 
 let prevLayerClicked = null;
-
+let prevWalkInd = null;
 
 ///// Initialize Map
 
@@ -525,6 +547,7 @@ let schoolLocations = [];
 
 // Initialize the marker cluster group (will add markers in while loop)
 let markers = L.markerClusterGroup();
+let counties = L.geoJson();
 
 
 
