@@ -83,7 +83,7 @@ walkabilityUrl = "https://test-wsuz.onrender.com/api/v1.0/project3/group4/data";
 
 // Set default style for state choropleth
 let stateStyle = {
-                  fillColor: 'rgb(140,150,198)',
+                  fillColor: 'rgb(200,210,258)',
                   weight: 2,
                   opacity: 1,
                   color: 'gray',
@@ -119,26 +119,33 @@ let stateSelectedStyle = {
 
 
 
-// Define color function for county walkability choropleth 
+// // Define color function for county walkability choropleth 
+// function getCountyColor(walkInd) {
+//         return walkInd > 16 ? '#810f7c' :
+//                 walkInd > 12 ? '#8856a7' :
+//                 walkInd > 8  ? '#8c96c6' :
+//                 walkInd > 4  ? '#b3cde3' :
+//                                 '#edf8fb' ;
+
 function getCountyColor(walkInd) {
-        return walkInd > 16 ? '#810f7c' :
-                walkInd > 12 ? '#8856a7' :
-                walkInd > 8  ? '#8c96c6' :
-                walkInd > 4  ? '#b3cde3' :
-                                '#edf8fb' ;
+    return walkInd > 9 ? '#810f7c' :
+            walkInd > 7 ? '#8856a7' :
+            walkInd > 4 ? '#8c96c6' :
+            walkInd > 1  ? '#b3cde3' :
+                            '#edf8fb' ;
+}
 
   //rgb("244,200,96") //least walkable (1-5.75)
   //rgb("255,255,163") //below avg walkable (5.76-10.5)
   //rgb("204,253,166") //above avg walkable (10.51-15.25)
   //rgb("133,192,95") // most walkable (15.26 - 20)
-}
 
 
 // Create function to define actions when each state feature is clicked
 function onEachState(feature,layer) {
 
     async function addGeoJson() {
-        const response = await fetch("static/data/countygeo.json");
+        const response = await fetch("static/data/countygeo_jack.json");
         const countiesData = await response.json();
 
     // Identify which state ID was just selected
@@ -306,51 +313,68 @@ function showCounties(selectedStateCounties, map) {
     let selectedState = stateDict[selectedStateId];
     // let walkabilityIndex = stateJson;
 
+    function style(feature) {
+        return {
+            fillColor: getCountyColor(feature.properties.walkability_score),
+            weight: 2,
+            opacity: 1,
+            color: 'gray',
+            dashArray: '',
+            fillOpacity: 0.7
+        };
+    }
+
     // Set default style for county choropleth
-    let countyStyle = {
-        fillColor: 'rgb(224,236,244)',
-        // fillColor: getCountyColor,
-        weight: 2,
-        opacity: 1,
-        color: 'gray',
-        dashArray: '',
-        fillOpacity: 0.7
+    function countyStyle(walkInd) {
+        return {
+            fillColor: getCountyColor(walkInd),
+            weight: 2,
+            opacity: 1,
+            color: 'gray',
+            dashArray: '',
+            fillOpacity: 0.7
+        }
     };
 
     // Set county style for mouseover
-    let countyHighlightStyle = {
-                fillColor: 'rgb(65,182,196)',
-                weight: 5,
-                color: "gray",
-                dashArray: '',
-                fillOpacity: 0.7
-            };
+    function countyHighlightStyle(walkInd) {
+        return {
+            fillColor: getCountyColor(walkInd),
+            weight: 5,
+            color: "gray",
+            dashArray: '',
+            fillOpacity: 0.7
+        }   
+    };
 
     // Set county style when clicked
-    let countySelectedStyle = {
-                fillColor: 'rgb(65,182,196)',
-                weight: 5,
-                color: "gray",
-                dashArray: '',
-                fillOpacity: 0.5
-            };
+    function countySelectedStyle(walkInd) {
+        return {
+            fillColor: getCountyColor(walkInd),
+            weight: 5,
+            color: "gray",
+            dashArray: '',
+            fillOpacity: 0.5
+        }
+    };
 
     countyLayer.clearLayers();
     let counties = L.geoJson(selectedStateCounties, {
-        style: countyStyle,
+        style: style,
 
         onEachFeature: (feature,layer) => {
             layer.on({
                 mouseover: e => {
                     let layer = e.target;
-                    layer.setStyle(countyHighlightStyle);
+                    layer.setStyle(countyHighlightStyle(feature.properties.walkability_score));
                     layer.bringToFront();
+                    console.log(feature.properties.walkability_score);
                 },
                 mouseout: e => {
                     let layer = e.target;
-                    layer.setStyle(countyStyle);
+                    layer.setStyle(countyStyle(feature.properties.walkability_score));
                     if (prevLayerClicked !== null) {
-                    prevLayerClicked.setStyle(countySelectedStyle);
+                    prevLayerClicked.setStyle(countySelectedStyle(feature.properties.walkability_score));
                     }
                     layer.bringToFront();
 
@@ -371,12 +395,12 @@ function showCounties(selectedStateCounties, map) {
 
                     // Check if a county was selected before and reset its style
                     if (prevLayerClicked !== null) {
-                    prevLayerClicked.setStyle(countyStyle);
+                    prevLayerClicked.setStyle(countyStyle(feature.properties.walkability_score));
                     }
 
                     // Adjust selected county style
                     let layer = e.target;
-                    layer.setStyle(countySelectedStyle);
+                    layer.setStyle(countySelectedStyle(feature.properties.walkability_score));
 
                     layer.bringToFront();
                     
