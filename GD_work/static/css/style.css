@@ -54,9 +54,9 @@ html {
 .legend {
   line-height: 18px;
   color: #555;
-  background-color: white;
   padding: 4px;
-  opacity: 0.7;
+  opacity: 0.8;
+  background-color:whitesmoke;
 }
 
 .legend i {
@@ -65,5 +65,4 @@ html {
   float: left;
   margin-right: 8px;
   /* opacity: .7; */
-
 }

@@ -139,7 +139,7 @@ return {
     weight: 5,
     color: "lightgray",
     dashArray: '',
-    fillOpacity: 0.6
+    fillOpacity: 0.5
 }   
 };
 
@@ -150,19 +150,26 @@ return {
     weight: 5,
     color: "gray",
     dashArray: '',
-    fillOpacity: 0.7
+    fillOpacity: 0.8
 }
 };
 
-// // Define color function for county walkability choropleth 
-function getCountyColor(walkInd) {
-        return walkInd >= 15 ? '#980043' :
-                walkInd >= 12 ? '#dd1c77' :
-                walkInd >= 8  ? '#df65b0' :
-                walkInd >= 4  ? '#d7b5d8' :
-                                '#f1eef6' ;
+countyColorDict = {
+    15: '#980043',
+    12: '#dd1c77',
+    8: '#df65b0',
+    4: '#d7b5d8',
+    0: '#f1eef6'
 }
 
+// // Define color function for county walkability choropleth 
+function getCountyColor(walkInd) {
+        return walkInd >= 14 ? '#7a0177' :
+                walkInd >= 11 ? '#c51b8a' :
+                walkInd >= 7  ? '#f768a1' :
+                walkInd >= 4  ? '#fbb4b9' :
+                                '#feebe2' ;
+}
 
 // function getCountyColor(walkInd) {
 //     return walkInd > 9 ? '#810f7c' :
@@ -351,8 +358,6 @@ function showCounties(selectedStateCounties) {
 
     let selectedStateId = selectedStateCounties[0].properties.STATE;
     let selectedState = stateDict[selectedStateId];
-    // let walkabilityIndex = stateJson;
-
 
     countyLayer.clearLayers();
     counties = L.geoJson(selectedStateCounties, {
@@ -398,8 +403,6 @@ function showCounties(selectedStateCounties) {
                     if (prevLayerClicked !== null) {
                         prevLayerClicked.setStyle(countyStyle(prevWalkInd));
                     }
-
-                    
 
                     layer.bringToFront();
                     
@@ -474,8 +477,6 @@ function addMarkers(data) {
 
     // console.log("AddMARKERS FUNCTION:", markers);
     markers.addTo(myMap);
-  
-    
 }
 
 
@@ -532,7 +533,7 @@ let legend = L.control({position: 'bottomright'});
 
 legend.onAdd = function (myMap) {
         let div = L.DomUtil.create('div', 'info legend');
-        let walkability_scores = [0, 4, 8, 12, 15];
+        let walkability_scores = [0, 4, 7, 11, 14];
         let categories = ['Lowest walkablity', 'below avg walkablity', 'avg walkability', 'above avg walkability', 'highest walkability'];
         let labels = ['<strong>Walkability<br>Index</strong><br>'];
     // loop through our density intervals and generate a label with a colored square for each interval
