@@ -108,37 +108,60 @@ let stateSelectedStyle = {
                             fillOpacity: 0.5
                           };
 
-// $.getJSON(walkabilityUrl, function(data) {
-//     console.log(data);
-// });
+// Set default style for county choropleth
+function style(feature) {
+return {
+    fillColor: getCountyColor(feature.properties.walkability_score),
+    weight: 2,
+    opacity: 1,
+    color: 'gray',
+    dashArray: '',
+    fillOpacity: 0.8
+};
+}
 
+// Reset style for county choropleth
+function countyStyle(walkInd) {
+return {
+    fillColor: getCountyColor(walkInd),
+    weight: 2,
+    opacity: 1,
+    color: 'gray',
+    dashArray: '',
+    fillOpacity: 0.8
+}
+};
 
-// addGeoJson();
+// Set county style for mouseover
+function countyHighlightStyle(walkInd) {
+return {
+    fillColor: getCountyColor(walkInd),
+    weight: 5,
+    color: "lightgray",
+    dashArray: '',
+    fillOpacity: 0.6
+}   
+};
 
-
-
-
+// Set county style when clicked
+function countySelectedStyle(walkInd) {
+return {
+    fillColor: getCountyColor(walkInd),
+    weight: 5,
+    color: "gray",
+    dashArray: '',
+    fillOpacity: 0.7
+}
+};
 
 // // Define color function for county walkability choropleth 
 function getCountyColor(walkInd) {
-        return walkInd > 15 ? '#2b83ba' :
-                walkInd > 12 ? '#abdda4' :
-                walkInd > 8  ? '#ffffbf' :
-                walkInd > 4  ? '#fdae61' :
-                                '#d7191c' ;
+        return walkInd >= 15 ? '#980043' :
+                walkInd >= 12 ? '#dd1c77' :
+                walkInd >= 8  ? '#df65b0' :
+                walkInd >= 4  ? '#d7b5d8' :
+                                '#f1eef6' ;
 }
-                
-//     return walkInd >18 ? '#a50026' :
-//             walkInd > 16 ? '#d73027' : 
-//             walkInd > 14 ? '#f46d43' :
-//             walkInd > 12 ? '#fdae61' :
-//             walkInd > 10 ? '#fee08b' :
-//             walkInd > 8 ? '#ffffbf' :
-//             walkInd > 6 ? '#66bd63' :
-//             walkInd > 4 ? '#a6d96a' :
-//             walkInd > 2 ? '#66bd63' :
-//                          '#1a9850' ;
-// }
 
 
 // function getCountyColor(walkInd) {
@@ -330,51 +353,6 @@ function showCounties(selectedStateCounties) {
     let selectedState = stateDict[selectedStateId];
     // let walkabilityIndex = stateJson;
 
-    
-    function style(feature) {
-        return {
-            fillColor: getCountyColor(feature.properties.walkability_score),
-            weight: 2,
-            opacity: 1,
-            color: 'gray',
-            dashArray: '',
-            fillOpacity: 0.8
-        };
-    }
-
-    // Set default style for county choropleth
-    function countyStyle(walkInd) {
-        return {
-            fillColor: getCountyColor(walkInd),
-            weight: 2,
-            opacity: 1,
-            color: 'gray',
-            dashArray: '',
-            fillOpacity: 0.8
-        }
-    };
-
-    // Set county style for mouseover
-    function countyHighlightStyle(walkInd) {
-        return {
-            fillColor: getCountyColor(walkInd),
-            weight: 5,
-            color: "lightgray",
-            dashArray: '',
-            fillOpacity: 0.6
-        }   
-    };
-
-    // Set county style when clicked
-    function countySelectedStyle(walkInd) {
-        return {
-            fillColor: getCountyColor(walkInd),
-            weight: 5,
-            color: "gray",
-            dashArray: '',
-            fillOpacity: 0.7
-        }
-    };
 
     countyLayer.clearLayers();
     counties = L.geoJson(selectedStateCounties, {
@@ -549,7 +527,27 @@ let schoolLocations = [];
 let markers = L.markerClusterGroup();
 let counties = L.geoJson();
 
+// Create legend object
+let legend = L.control({position: 'bottomright'});
 
+legend.onAdd = function (myMap) {
+        let div = L.DomUtil.create('div', 'info legend');
+        let walkability_scores = [0, 4, 8, 12, 15];
+        let categories = ['Lowest walkablity', 'below avg walkablity', 'avg walkability', 'above avg walkability', 'highest walkability'];
+        let labels = ['<strong>Walkability<br>Index</strong><br>'];
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (let i = 0; i < walkability_scores.length; i++) {
+        
+        div.innerHTML += labels.push(
+            '<i style="background:' + getCountyColor(walkability_scores[i]) + '"></i> ' +
+            walkability_scores[i] + (walkability_scores[i + 1] ? '&ndash;' + walkability_scores[i + 1] + '<br>' : '+'));
+        }
+    div.innerHTML = labels.join('');
+
+    return div;
+};
+
+legend.addTo(myMap);
 
 
 
