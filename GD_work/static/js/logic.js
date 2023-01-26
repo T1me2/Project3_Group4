@@ -105,6 +105,26 @@ let stateSelectedStyle = {
                             dashArray: '',
                             fillOpacity: 0.5
                           };
+walkabilityUrl = "https://test-wsuz.onrender.com/api/v1.0/project3/group4/data";
+// $.getJSON(walkabilityUrl, function(data) {
+//     console.log(data);
+// });
+
+// async function addGeoJson() {
+//     console.log("Starting API call...");
+//     const response = await fetch(walkabilityUrl);
+//     const data = await response.json();
+//     console.log(data);
+    // L.geoJson(data).addTo(map);
+
+    // function getColor(walkInd) {
+    //     return walkInd > 9 ? '#810f7c' :
+    //             walkInd > 7 ? '#8856a7' :
+    //             walkInd > 4 ? '#8c96c6' :
+    //             walkInd > 1  ? '#b3cde3' :
+    //                             '#edf8fb' ;
+    //     }
+// }
 
 // Set default style for county choropleth
 let countyStyle = {
@@ -427,6 +447,7 @@ let prevLayerClicked = null;
 
 ///// Initialize Map
 
+
 // State Layer
 let stateLayer = L.geoJson(statesData, {
     style: stateStyle,
@@ -464,6 +485,7 @@ let schoolLocations = [];
 
 // Initialize the marker cluster group (will add markers in while loop)
 let markers = L.markerClusterGroup();
+
 
 myMap.invalidateSize();
 ///// Create function to initialize dashboard and create dropdown menu
