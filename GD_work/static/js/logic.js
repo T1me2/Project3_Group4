@@ -154,20 +154,14 @@ return {
 }
 };
 
-countyColorDict = {
-    15: '#980043',
-    12: '#dd1c77',
-    8: '#df65b0',
-    4: '#d7b5d8',
-    0: '#f1eef6'
-}
+let walkability_scores = [0, 5, 6, 7, 12];
 
 // // Define color function for county walkability choropleth 
 function getCountyColor(walkInd) {
-        return walkInd >= 14 ? '#7a0177' :
-                walkInd >= 11 ? '#c51b8a' :
-                walkInd >= 7  ? '#f768a1' :
-                walkInd >= 4  ? '#fbb4b9' :
+        return walkInd >= walkability_scores[4] ? '#7a0177' :
+                walkInd >= walkability_scores[3] ? '#c51b8a' :
+                walkInd >= walkability_scores[2]  ? '#f768a1' :
+                walkInd >= walkability_scores[1]  ? '#fbb4b9' :
                                 '#feebe2' ;
 }
 
@@ -533,15 +527,15 @@ let legend = L.control({position: 'bottomright'});
 
 legend.onAdd = function (myMap) {
         let div = L.DomUtil.create('div', 'info legend');
-        let walkability_scores = [0, 4, 7, 11, 14];
-        let categories = ['Lowest walkablity', 'below avg walkablity', 'avg walkability', 'above avg walkability', 'highest walkability'];
-        let labels = ['<strong>Walkability<br>Index</strong><br>'];
+        let categories = ['Least Walkable', 'Below Average', 'Average', 'Above Average', 'Most Walkable'];
+        let labels = ['<strong>Walkability Index</strong><br>'];
     // loop through our density intervals and generate a label with a colored square for each interval
     for (let i = 0; i < walkability_scores.length; i++) {
         
         div.innerHTML += labels.push(
             '<i style="background:' + getCountyColor(walkability_scores[i]) + '"></i> ' +
-            walkability_scores[i] + (walkability_scores[i + 1] ? '&ndash;' + walkability_scores[i + 1] + '<br>' : '+'));
+            // walkability_scores[i] + (walkability_scores[i + 1] ? '&ndash;' + walkability_scores[i + 1] + '<br>' : '+'));
+            categories[i] + '<br>');
         }
     div.innerHTML = labels.join('');
 
