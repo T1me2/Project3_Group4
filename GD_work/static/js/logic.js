@@ -79,6 +79,8 @@ let cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}
   maxZoom: 20,
 });
 
+walkabilityUrl = "https://test-wsuz.onrender.com/api/v1.0/project3/group4/data";
+
 // Set default style for state choropleth
 let stateStyle = {
                   fillColor: 'rgb(140,150,198)',
@@ -105,55 +107,17 @@ let stateSelectedStyle = {
                             dashArray: '',
                             fillOpacity: 0.5
                           };
-walkabilityUrl = "https://test-wsuz.onrender.com/api/v1.0/project3/group4/data";
+
 // $.getJSON(walkabilityUrl, function(data) {
 //     console.log(data);
 // });
 
-// async function addGeoJson() {
-//     console.log("Starting API call...");
-//     const response = await fetch(walkabilityUrl);
-//     const data = await response.json();
-//     console.log(data);
-    // L.geoJson(data).addTo(map);
 
-    // function getColor(walkInd) {
-    //     return walkInd > 9 ? '#810f7c' :
-    //             walkInd > 7 ? '#8856a7' :
-    //             walkInd > 4 ? '#8c96c6' :
-    //             walkInd > 1  ? '#b3cde3' :
-    //                             '#edf8fb' ;
-    //     }
-// }
+// addGeoJson();
 
-// Set default style for county choropleth
-let countyStyle = {
-                    fillColor: 'rgb(224,236,244)',
-                    // fillColor: getCountyColor,
-                    weight: 2,
-                    opacity: 1,
-                    color: 'gray',
-                    dashArray: '',
-                    fillOpacity: 0.7
-                  };
 
-// Set county style for mouseover
-let countyHighlightStyle = {
-                            fillColor: 'rgb(65,182,196)',
-                            weight: 5,
-                            color: "gray",
-                            dashArray: '',
-                            fillOpacity: 0.7
-                          };
 
-// Set county style when clicked
-let countySelectedStyle = {
-                            fillColor: 'rgb(65,182,196)',
-                            weight: 5,
-                            color: "gray",
-                            dashArray: '',
-                            fillOpacity: 0.5
-                          };
+
 
 // Define color function for county walkability choropleth 
 function getCountyColor(walkInd) {
@@ -173,58 +137,67 @@ function getCountyColor(walkInd) {
 // Create function to define actions when each state feature is clicked
 function onEachState(feature,layer) {
 
-  // Identify which state ID was just selected
-  let selectedStateId = feature.properties.GEO_ID.slice(-2);
+    async function addGeoJson() {
+        const response = await fetch("static/data/countygeo.json");
+        const countiesData = await response.json();
 
-  // Retrieve current state abbreviation from dictionary
-  let selectedStateAbb = stateDict[selectedStateId];
+    // Identify which state ID was just selected
+    let selectedStateId = feature.properties.GEO_ID.slice(-2);
 
-  // Filter countiesData geojson to only county features within selected state
-  let selectedStateCounties = countiesData.features.filter(feature => {
-    return feature.properties.STATE === selectedStateId;
-  });
+    // Retrieve current state abbreviation from dictionary
+    let selectedStateAbb = stateDict[selectedStateId];
 
-  // Define actions for interacting with state feature
-  layer.on({
+    // Filter countiesData geojson to only county features within selected state
+    let selectedStateCounties = countiesData.features.filter(feature => {
+        return feature.properties.STATE === selectedStateId;
+    });
 
-      // Set state highlight style on hover
-      mouseover: e => {
-          layer.setStyle(stateHighlightStyle);
-      },
+    // Define actions for interacting with state feature
+    layer.on({
 
-      // Reset state style when hover 
-      mouseout: e => {
-          stateLayer.setStyle(stateStyle);
-      },
+        // Set state highlight style on hover
+        mouseover: e => {
+            layer.setStyle(stateHighlightStyle);
+        },
 
-      // Set state style when selected
-      click: e => {
-          let layer = e.target;
-          layer.setStyle(stateSelectedStyle);
+        // Reset state style when hover 
+        mouseout: e => {
+            stateLayer.setStyle(stateStyle);
+        },
 
-          // Update panel title to state abbr.
-          d3.select('.panel-title').text(stateNames[selectedStateAbb]);
-          
-          // Check for previously selected states and reset them
-          if (prevLayerClicked !== null) {
-            prevLayerClicked.setStyle(stateStyle);
-          }
+        // Set state style when selected
+        click: e => {
+            let layer = e.target;
+            layer.setStyle(stateSelectedStyle);
 
-          // Zoom to fit state boundaries
-          myMap.fitBounds(layer.getBounds());
+            // Update panel title to state abbr.
+            d3.select('.panel-title').text(stateNames[selectedStateAbb]);
+            
+            // Check for previously selected states and reset them
+            if (prevLayerClicked !== null) {
+                prevLayerClicked.setStyle(stateStyle);
+            }
 
-          // Store current selection for later restyling
-          prevLayerClicked = layer;
+            // Zoom to fit state boundaries
+            myMap.fitBounds(layer.getBounds());
 
-          // Create/display county choropleth layer for selected state
-          showCounties(selectedStateCounties, myMap);
+            // Store current selection for later restyling
+            prevLayerClicked = layer;
 
-          // Create markers for selected state
-          showSchoolMarkersState(selectedStateAbb);
-            // showSchoolMarkers(selectedStateAbb);
-      }
-  });
+            // Create/display county choropleth layer for selected state
+            showCounties(selectedStateCounties, myMap);
+
+            // Create markers for selected state
+            showSchoolMarkersState(selectedStateAbb);
+                // showSchoolMarkers(selectedStateAbb);
+            }
+        });
+    }
+    addGeoJson();
 }
+
+
+
 
 // Show school marker clusters when county is selected
 function showSchoolMarkersCounty(state, county='') {
@@ -277,6 +250,8 @@ function showSchoolMarkersCounty(state, county='') {
         });
   }
   
+
+
   // Show marker cluster layer when state selected
  function showSchoolMarkersState(state) {
     // Clear any existing marker cluster layer
@@ -320,66 +295,99 @@ function showSchoolMarkersCounty(state, county='') {
     });
 }
 
+
+
+
+
 // Display county choropleth when state is clicked
-function showCounties(stateJson, map) {
+function showCounties(selectedStateCounties, map) {
 
-  let selectedStateId = stateJson[0].properties.STATE;
-  let selectedState = stateDict[selectedStateId];
+    let selectedStateId = selectedStateCounties[0].properties.STATE;
+    let selectedState = stateDict[selectedStateId];
+    // let walkabilityIndex = stateJson;
 
-  countyLayer.clearLayers();
-  let counties = L.geoJson(stateJson, {
-      style: countyStyle,
+    // Set default style for county choropleth
+    let countyStyle = {
+        fillColor: 'rgb(224,236,244)',
+        // fillColor: getCountyColor,
+        weight: 2,
+        opacity: 1,
+        color: 'gray',
+        dashArray: '',
+        fillOpacity: 0.7
+    };
 
-      onEachFeature: (feature,layer) => {
-          layer.on({
-            mouseover: e => {
-                let layer = e.target;
-                layer.setStyle(countyHighlightStyle);
-                layer.bringToFront();
-                // layer.openPopup(`${feature.properties.NAME} County`);
-            },
-            mouseout: e => {
-                let layer = e.target;
-                layer.setStyle(countyStyle);
-                if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(countySelectedStyle);
+    // Set county style for mouseover
+    let countyHighlightStyle = {
+                fillColor: 'rgb(65,182,196)',
+                weight: 5,
+                color: "gray",
+                dashArray: '',
+                fillOpacity: 0.7
+            };
+
+    // Set county style when clicked
+    let countySelectedStyle = {
+                fillColor: 'rgb(65,182,196)',
+                weight: 5,
+                color: "gray",
+                dashArray: '',
+                fillOpacity: 0.5
+            };
+
+    countyLayer.clearLayers();
+    let counties = L.geoJson(selectedStateCounties, {
+        style: countyStyle,
+
+        onEachFeature: (feature,layer) => {
+            layer.on({
+                mouseover: e => {
+                    let layer = e.target;
+                    layer.setStyle(countyHighlightStyle);
+                    layer.bringToFront();
+                },
+                mouseout: e => {
+                    let layer = e.target;
+                    layer.setStyle(countyStyle);
+                    if (prevLayerClicked !== null) {
+                    prevLayerClicked.setStyle(countySelectedStyle);
+                    }
+                    layer.bringToFront();
+
+                },
+                click: e => {
+                    // Get selected county name
+                    let selectedCounty = `${feature.properties.NAME}`;
+
+                    // Update panel header with county/state name
+                    d3.select(".panel-title").text(`${feature.properties.NAME} County, ${selectedState}`);
+
+                    // Create and display marker clusters for schools within selected county
+                    showSchoolMarkersCounty(selectedState, selectedCounty);
+                    // showSchoolMarkers(selectedState, selectedCounty);
+
+                    // Reset the state layer to default
+                    stateLayer.setStyle(stateStyle);
+
+                    // Check if a county was selected before and reset its style
+                    if (prevLayerClicked !== null) {
+                    prevLayerClicked.setStyle(countyStyle);
+                    }
+
+                    // Adjust selected county style
+                    let layer = e.target;
+                    layer.setStyle(countySelectedStyle);
+
+                    layer.bringToFront();
+                    
+                    // Zoom to fit county boundaries
+                    map.fitBounds(layer.getBounds());
+                    
+                    // Store current selection for later restyling
+                    prevLayerClicked = layer;
                 }
-                layer.bringToFront();
-
-            },
-            click: e => {
-                // Get selected county name
-                let selectedCounty = `${feature.properties.NAME}`;
-
-                // Update panel header with county/state name
-                d3.select(".panel-title").text(`${feature.properties.NAME} County, ${selectedState}`);
-
-                // Create and display marker clusters for schools within selected county
-                showSchoolMarkersCounty(selectedState, selectedCounty);
-                // showSchoolMarkers(selectedState, selectedCounty);
-
-                // Reset the state layer to default
-                stateLayer.setStyle(stateStyle);
-
-                // Check if a county was selected before and reset its style
-                if (prevLayerClicked !== null) {
-                  prevLayerClicked.setStyle(countyStyle);
-                }
-
-                // Adjust selected county style
-                let layer = e.target;
-                layer.setStyle(countySelectedStyle);
-
-                layer.bringToFront();
-                
-                // Zoom to fit county boundaries
-                map.fitBounds(layer.getBounds());
-                
-                // Store current selection for later restyling
-                prevLayerClicked = layer;
-            }
             }).bindPopup(`${feature.properties.NAME} County`);
-      }
+        }
   });
 
   // Add leaflet geojson layer to existing countyLayer
@@ -392,6 +400,10 @@ function showCounties(stateJson, map) {
   // Add county layer to map
   map.addLayer(countyLayer);
 }
+
+
+
+
 
 // Create markers from Public School data (function takes in and parses geoJSON data)
 function addMarkers(data) {
@@ -442,6 +454,10 @@ function addMarkers(data) {
     
 }
 
+
+
+
+
 let prevLayerClicked = null;
 
 
@@ -485,45 +501,6 @@ let schoolLocations = [];
 
 // Initialize the marker cluster group (will add markers in while loop)
 let markers = L.markerClusterGroup();
-
-
-myMap.invalidateSize();
-///// Create function to initialize dashboard and create dropdown menu
-// function createDropdownMenu() {
-//     // Loop through sample data to add sample IDs to dropdown menu
-//     for (i=0; i<stateNames.length; i++) {
-//       // Select the dropdown menu element using D3
-//       let dropDownMenu = d3.select("#selDataset");
-//       // Add new "option" element for every sample in dataset
-//       let newOption = dropDownMenu.append("option");
-//       // Set text in each option to the sample ID
-//       newOption.text(stateNames[i]);
-
-//       console.log("dropdownMenu", dropDownMenu);
-//     }
-//   };
-  
-//   ///// Create function to update page based on changes in dropdown menu
-//   function optionChanged(state) {
-//     console.log("optionChanged:", state);
-//     // Update charts to data for selected sample ID
-//     createCharts(sampleID);
-//     // Updata demographic info panel for selected sample ID
-//     getMetadata(sampleID);
-//   }
-  
-  // createDropdownMenu();
-
-
-//   let heat = L.heatLayer(schoolLocations, {
-//     radius:30,
-//     blur:10
-//   }).addTo(myMap);
-
-// layerControl.addOverlay(heat, "Heat");
-
-
-
 
 
 
@@ -584,13 +561,3 @@ function showSchoolMarkers(state, county='') {
         schoolsRemaining -= 2000;
     }
 }
-
-
-
-
-
-// d3.csv("walkability.csv",function(data){
-//     console.log(data);
-// },function(error, rows){
-//    console.log(rows); 
-// });
