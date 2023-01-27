@@ -110,7 +110,7 @@ html {
   margin: 10px;
 } */
 
-#scatter, #bar {
+#scatter-plot, #bar {
   height: inherit;
   width: inherit
 }
