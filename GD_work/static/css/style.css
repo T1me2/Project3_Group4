@@ -20,7 +20,7 @@ html {
   border-color: gray;
   border-width: 5px;
   margin-bottom: 20px;
-  height: 230px;
+  height: inherit;
   width: inherit;
   /* margin: 10px; */
   padding: 5px;

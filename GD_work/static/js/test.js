@@ -641,7 +641,7 @@ function updateChartjs (stateData) {
         data: {
           datasets: [{
             pointRadius: 4,
-            pointBackgroundColor: "rgba(0,0,255,1)",
+            pointBackgroundColor: "#7a0177",
             data: counties_list
           }]
         },
