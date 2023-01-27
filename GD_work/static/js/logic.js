@@ -69,7 +69,8 @@ let stateNames = {
     'WY': 'Wyoming'
 }
 
-let walkability_scores = [0, 4, 8, 9, 13];
+// Define endpoints for walkability score ranges (for county choropleth coloring and legend)
+let walkability_scores = [0, 4, 6.5, 9, 13];
 
 // Define toner tile baselayer
 let toner = new L.StamenTileLayer("toner-lite");
@@ -85,7 +86,7 @@ walkabilityUrl = "https://test-wsuz.onrender.com/api/v1.0/project3/group4/data";
 
 // Set default style for state choropleth
 let stateStyle = {
-                  fillColor: 'rgb(200,210,258)',
+                  fillColor: 'rgb(190,210,258)',
                   weight: 2,
                   opacity: 1,
                   color: 'gray',
@@ -260,6 +261,7 @@ function showSchoolMarkersCounty(state, county='') {
             county = `${county} County`
         }
 
+
         // Set default for current length of api return call (can only do 2000 at a time)
         let offsetCount = 0;
 
@@ -350,6 +352,7 @@ function showSchoolMarkersCounty(state, county='') {
 // Display county choropleth when state is clicked
 function showCounties(selectedStateCounties) {
 
+    console.log("ShowCounties", selectedStateCounties);
     let selectedStateId = selectedStateCounties[0].properties.STATE;
     let selectedState = stateDict[selectedStateId];
 
@@ -377,7 +380,7 @@ function showCounties(selectedStateCounties) {
                 click: e => {
                     // Get selected county name
                     let selectedCounty = `${feature.properties.NAME}`;
-
+                    // let selectedCountyId = feature.properties.COUNTY;
                     // layer.setStyle(style);
                     // Adjust selected county style
                     let layer = e.target;
@@ -388,6 +391,7 @@ function showCounties(selectedStateCounties) {
 
                     // Create and display marker clusters for schools within selected county
                     showSchoolMarkersCounty(selectedState, selectedCounty);
+                    // showSchoolMarkersCounty(selectedState, selectedCountyId);
                     // showSchoolMarkers(selectedState, selectedCounty);
 
                     // Reset the state layer to default
