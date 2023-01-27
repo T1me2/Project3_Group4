@@ -9,14 +9,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-const queryUrl = "https://test-wsuz.onrender.com/api/v1.0/project3/group4/data"
-  d3.json(queryUrl).then(function (data) {
-    console.log(data)
-    createFeatures(data.features);
-  });
-
 async function addGeoJson() {
-    const response = await fetch("static/data/countygeo_jack.json");
+    const response = await fetch("https://test-wsuz.onrender.com/api/v1.0/project3/group4/data");
     const data = await response.json();
     console.log(data);
     L.geoJson(data).addTo(map);
