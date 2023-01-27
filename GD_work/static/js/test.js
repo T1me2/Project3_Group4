@@ -1,4 +1,4 @@
-// Initialize variable to store API response
+// Initialize variables to store API response
 let countiesData;
 let stateLayer;
 let myMap;
@@ -279,7 +279,7 @@ function onEachState(feature,layer) {
         // Set state style when selected
         click: function(e) {
             // let layer = e.target;
-            console.log(e.target._bounds);
+
             layer.setStyle(stateSelectedStyle);
 
             // Update panel title to state abbr.
@@ -302,6 +302,9 @@ function onEachState(feature,layer) {
             // Create markers for selected state
             showSchoolMarkersState(selectedStateAbb);
                 // showSchoolMarkers(selectedStateAbb);
+
+            // PLOT HERE
+
             }
         });
     }
