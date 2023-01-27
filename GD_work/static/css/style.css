@@ -4,6 +4,9 @@ body {
   margin: 0px;
 }
 
+p {
+  font-size: 14px;
+}
 
 #map,
 body,
@@ -14,9 +17,12 @@ html {
 
 .panel {
   border-style: solid;
-  height: 100%;
-  width: 100%;
-  margin: 10px;
+  border-color: gray;
+  border-width: 5px;
+  margin-bottom: 20px;
+  height: 230px;
+  width: 300px;
+  /* margin: 10px; */
   padding: 5px;
 }
 
@@ -33,7 +39,7 @@ html {
   position: relative;
   height: 400px;
   width: 600px;
-  margin-top: 50px;
+  /* margin-top: 50px; */
   margin-bottom: 30px;
 }
 
@@ -44,7 +50,7 @@ html {
   border-style: solid;
   border-color: gray;
   border-width: 5px;
-  margin: 20px;
+  margin: 0px;
 }
 
 #map {
