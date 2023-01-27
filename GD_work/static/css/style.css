@@ -35,15 +35,17 @@ html {
   margin-bottom: 20px;
 }
 
-#map-container {
+#map-container-fluid {
   position: relative;
   height: 400px;
-  width: 600px;
+  width: 100%;
   /* margin-top: 50px; */
   margin-bottom: 30px;
 }
 
-#map-frame {
+#map-frame, 
+#scatter-frame, 
+#bar-frame {
   position: relative;
   height: inherit;
   width: inherit;
@@ -92,4 +94,20 @@ html {
 }
 .marker-cluster-large div {
   background-color: rgba(241, 128, 23, 0.6);
+}
+
+
+/* #scatter-frame, #bar-frame {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-style: solid;
+  border-color: gray;
+  border-width: 5px;
+  margin: 10px;
+} */
+
+#scatter, #bar {
+  height: inherit;
+  width: inherit
 }

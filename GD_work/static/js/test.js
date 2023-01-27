@@ -277,14 +277,15 @@ function onEachState(feature,layer) {
         },
 
         // Set state style when selected
-        click: function(e) {
+        click: e => {
             // let layer = e.target;
+            d3.select("#scatter").text(`${selectedStateAbb} Scatter`);
+            d3.select("#bar").text(`${selectedStateAbb} Histogram`);
 
             layer.setStyle(stateSelectedStyle);
 
             // Update panel title to state abbr.
             d3.select('.panel-title').text(stateNames[selectedStateAbb]);
-            
             // Check for previously selected states and reset them
             if (prevLayerClicked !== null) {
                 prevLayerClicked.setStyle(stateStyle);
@@ -320,7 +321,7 @@ function showSchoolMarkersCounty(state, county='') {
         markers.clearLayers();
 
         // Reset any existing county school count text in panel-body
-        d3.select("#county-school-count").text('');
+        // d3.select("#county-school-count").text('Select a county for more');
 
         // Set default for current length of api return call (can only do 2000 at a time)
         let offsetCount = 0;
@@ -390,7 +391,7 @@ function showSchoolMarkersCounty(state, county='') {
         // Set number of schools left equal to total school count
         let schoolsRemaining = data.objectIds.length;
         // Clear existing county school count text in panel-body
-        d3.select("#county-school-count").text('');
+        d3.select("#county-school-count").text('(Select a county for more information)');
         d3.select("#walkability-score").text('')
         d3.select("#total-pop").text('');
         d3.select("#student-pop").text('');
@@ -466,7 +467,6 @@ function showCounties(selectedStateCounties) {
                     d3.select("#total-pop").text(`Total County Population: ${totalPop}`);
                     d3.select("#student-pop").text(`Student Population: ${studentPop} (${percentStud}%)`);
                     
-
                     // Create and display marker clusters for schools within selected county
                     showSchoolMarkersCounty(selectedState, selectedCountyId);
 

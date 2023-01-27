@@ -45,42 +45,47 @@
         </div>
       </div>
       <div class="row metadata-row">
-        <div class="col-md-5">
-          <div class="well">
-            <!-- <select class="dropdown" id="selDataset" onchange="optionChanged(this.value)"></select> -->
-          </div>
+        <div class="col-md-8 col-sm-12">
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h5 class="panel-title"></h5>
+              <h5 class="panel-title">Select a state to begin.</h5>
             </div>
             <div id="sample-metadata" class="panel-body">
-              <p id="state-school-count"> </p>
-              <p id="county-school-count"> </p>
+              <p id="state-school-count"></p>
+              <p id="county-school-count"></p>
               <p id="walkability-score"> </p>
               <p id="student-pop"> </p>
               <p id="total-pop"> </p>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-7">
-          <div id="map-container">
-            <div id="map-frame">
-              <div id="map"></div>
+          <div class="col-md-8 col-sm-12">
+            <div id="map-container-fluid">
+              <div id="map-frame">
+                <div id="map"></div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-md-5">
-          <div id="bar">
-            <h1>CHART HERE</h1>
+        <div class="col-md-4 col-sm-12">
+          <div class="bar-frame">
+            <div id="bar">
+              <h1>BAR CHART HERE</h1>
+            </div>
           </div>
-          <div id="gauge">
-            <h1>CHART HERE</h1>
+          <div class="scatter-frame">
+            <div id="scatter">
+              <h1>CHART HERE</h1>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <!-- <div class="row"> -->
+        
+        <div class="col-md-5 col-sm-12">
+          
+        </div>
+      </div>
+    <!-- </div> -->
     
 
     <!-- Leaflet heatmap plugin-->
