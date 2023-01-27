@@ -1,6 +1,6 @@
 // Initialize global variables
-// let countiesData = countiesDataLocal;
-let countiesData;
+let countiesData = countiesDataLocal;
+// let countiesData;
 let stateLayer;
 let myMap;
 let countyLayer;
@@ -10,6 +10,7 @@ let counties;
 let legend;
 let prevLayerClicked = null;
 let prevWalkInd = null;
+let counties_list = [];
 
 // Create empty list to store school locations
 let schoolLocations = [];
@@ -185,11 +186,11 @@ function getCountyColor(walkInd) {
 ///// Initialize Map
 
 // D3 to call our API for school/county data
-d3.json(walkabilityUrl).then(results => { // UNCOMMENT FOR NON-LOCAL CALL
+// d3.json(walkabilityUrl).then(results => { // UNCOMMENT FOR NON-LOCAL CALL
 
     // Store results in global countiesData
-    countiesData = results;
-    // countiesData = countiesDataLocal;
+    // countiesData = results;
+    countiesData = countiesDataLocal;
 
     // State Layer from statesData geoJSON variable (state boundaries)
     stateLayer = L.geoJson(statesData, {
@@ -247,8 +248,7 @@ d3.json(walkabilityUrl).then(results => { // UNCOMMENT FOR NON-LOCAL CALL
     };
 
     legend.addTo(myMap);
-}); 
-//UNCOMMENT FOR NON-LOCAL CALL
+// }); //UNCOMMENT FOR NON-LOCAL CALL
 
 
 // Create function to define actions when each state feature is clicked
@@ -271,7 +271,6 @@ function onEachState(feature,layer) {
         // Set state highlight style on hover
         mouseover: e => {
             layer.setStyle(stateHighlightStyle);
-            console.log("Mouseover on each state");
         },
 
         // Reset state style when hover 
@@ -309,7 +308,8 @@ function onEachState(feature,layer) {
                 // showSchoolMarkers(selectedStateAbb);
 
             // PLOT HERE
-            updateChartjs(selectedStateAbb);
+            console.log("selectedStateCounties", selectedStateCounties);
+            updateChartjs(selectedStateCounties);
             }
         });
     }
@@ -492,7 +492,6 @@ function showCounties(selectedStateCounties) {
                     prevWalkInd = feature.properties.walkability_score
                 }
             }).bindPopup(`${feature.properties.NAME} ${feature.properties.LSAD}`);
-            console.log(feature.properties);
         }
   });
 
@@ -621,26 +620,22 @@ function showSchoolMarkers(state, county='') {
 
 
 
-// const stateid = "03"
-let county_dict;
-let counties_list;
-
-function updateChartjs (stateid) {
+function updateChartjs (stateData) {
     //initialize list to fill with data points
     counties_list = []
-    
+
     //loop through selected state to get data points for each county based on walkability score and total population
-    let statedata = countiesData.filter(obj => obj.properties.STATE == stateid); 
-    for (var i = 0; i < statedata.length; i++) {
+    // let statedata = countiesData.filter(obj => obj.properties.STATE == stateid); 
+    for (let i = 0; i < stateData.length; i++) {
         counties_list.push({
-            x: statedata[i].properties.population,
-            y: statedata[i].properties.walkability_score
+            x: stateData[i].properties.population,
+            y: stateData[i].properties.walkability_score
             });
     }
-    console.log(counties_list)
+    console.log("COUNTIESLIST",counties_list);
 
     new Chart(
-        document.getElementById('acquisitions'),
+        document.getElementById('scatter-plot'),
         {
         type: "scatter",
         data: {
@@ -654,6 +649,8 @@ function updateChartjs (stateid) {
       });
 
 }
+
+
 
 //initialize function to update state based on optionchange
 
