@@ -72,6 +72,9 @@ let stateNames = {
 // Define endpoints for walkability score ranges (for county choropleth coloring and legend)
 let walkability_scores = [0, 4, 6.5, 9, 13];
 
+// Define URL for our rendered walkability/school GeoJSON API
+let walkabilityUrl = "https://test-wsuz.onrender.com/api/v1.0/project3/group4/data";
+
 // Define toner tile baselayer
 let toner = new L.StamenTileLayer("toner-lite");
 
@@ -81,8 +84,6 @@ let cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}
   minZoom: 0,
   maxZoom: 20,
 });
-
-walkabilityUrl = "https://test-wsuz.onrender.com/api/v1.0/project3/group4/data";
 
 // Set default style for state choropleth
 let stateStyle = {
@@ -166,26 +167,10 @@ function getCountyColor(walkInd) {
                                 '#feebe2' ;
 }
 
-// function getCountyColor(walkInd) {
-//     return walkInd > 9 ? '#810f7c' :
-//             walkInd > 7 ? '#8856a7' :
-//             walkInd > 4 ? '#8c96c6' :
-//             walkInd > 1  ? '#b3cde3' :
-//                             '#edf8fb' ;
-// }
-
-            
-
-
-  //rgb("244,200,96") //least walkable (1-5.75)
-  //rgb("255,255,163") //below avg walkable (5.76-10.5)
-  //rgb("204,253,166") //above avg walkable (10.51-15.25)
-  //rgb("133,192,95") // most walkable (15.26 - 20)
-
-
 // Create function to define actions when each state feature is clicked
 function onEachState(feature,layer) {
 
+    // Wrap in function that calls our API for school/county data
     async function addGeoJson() {
         const response = await fetch("static/data/countygeo_jack.json");
         const countiesData = await response.json();

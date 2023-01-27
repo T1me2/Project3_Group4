@@ -1,3 +1,17 @@
+// Initialize variable to store API response
+let countiesData;
+let stateLayer;
+let myMap;
+let countyLayer;
+let layerControl;
+let markers;
+let counties;
+let legend;
+
+// Create empty list to store school locations
+let schoolLocations = [];
+
+
 // Dictionary to convert state codes to state abbreviations
 let stateDict = {'01':'AL', '02':'AK', '04':'AZ', '05':'AR', '06':'CA', '08':'CO', '09':'CT', '10':'DE', 
                 '11':'DC', '12':'FL', '13':'GA', '15':'HI', '16':'ID', '17':'IL', '18':'IN', '19':'IA', 
@@ -169,78 +183,73 @@ function getCountyColor(walkInd) {
 
 
 ///// Initialize Map
+// Wrap in function that calls our API for school/county data
+d3.json(walkabilityUrl).then(results => {
 
+    countiesData = results;
+    console.log(results);
 
-// State Layer
-let stateLayer = L.geoJson(statesData, {
-    style: stateStyle,
-    onEachFeature: onEachState
-});
-
-// Create base and overlay maps
-let baseMaps = {
-    Toner: toner,
-    CyclOSM: cyclosm
-}
-
-
-let overlayMaps = {
-    States: stateLayer
-}
-
-// Create the map object
-let myMap = L.map("map", {
-    center: [40.2659, -96.7467],
-    zoom: 3,
-    layers: [cyclosm, stateLayer]
+    // State Layer
+    stateLayer = L.geoJson(statesData, {
+        style: stateStyle,
+        onEachFeature: onEachState
     });
 
-// Create layer group to store county boundary layers 
-let countyLayer = L.layerGroup();
+    // Create base and overlay maps
+    let baseMaps = {
+        Toner: toner,
+        CyclOSM: cyclosm
+    }
 
-// Add layer control
-let layerControl = L.control.layers(baseMaps, overlayMaps, {
-    collapsed: false
-}).addTo(myMap);
+    let overlayMaps = {
+        States: stateLayer
+    }
 
-// Create empty list to store school locations
-let schoolLocations = [];
+    // Create the map object
+    myMap = L.map("map", {
+        center: [40.2659, -96.7467],
+        zoom: 3,
+        layers: [cyclosm, stateLayer]
+        });
 
-// Initialize the marker cluster group (will add markers in while loop)
-let markers = L.markerClusterGroup();
-let counties = L.geoJson();
+    // Create layer group to store county boundary layers 
+    countyLayer = L.layerGroup();
 
-// Create legend object
-let legend = L.control({position: 'bottomright'});
+    // Add layer control
+    layerControl = L.control.layers(baseMaps, overlayMaps, {
+        collapsed: false
+    }).addTo(myMap);
 
-legend.onAdd = function (myMap) {
-        let div = L.DomUtil.create('div', 'info legend');
-        let categories = ['Least Walkable', 'Below Average', 'Average', 'Above Average', 'Most Walkable'];
-        let labels = ['<strong>Walkability Index</strong><br>'];
-    // loop through our density intervals and generate a label with a colored square for each interval
-    for (let i = 0; i < walkability_scores.length; i++) {
-        
-        div.innerHTML += labels.push(
-            '<i style="background:' + getCountyColor(walkability_scores[i]) + '"></i> ' +
-            // walkability_scores[i] + (walkability_scores[i + 1] ? '&ndash;' + walkability_scores[i + 1] + '<br>' : '+'));
-            categories[i] + '<br>');
-        }
-    div.innerHTML = labels.join('');
+    // Initialize the marker cluster group (will add markers in while loop)
+    markers = L.markerClusterGroup();
+    counties = L.geoJson();
 
-    return div;
-};
+    // Create legend object
+    legend = L.control({position: 'bottomright'});
 
-legend.addTo(myMap);
+    legend.onAdd = function (myMap) {
+            let div = L.DomUtil.create('div', 'info legend');
+            let categories = ['Least Walkable', 'Below Average', 'Average', 'Above Average', 'Most Walkable'];
+            let labels = ['<strong>Walkability Index</strong><br>'];
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (let i = 0; i < walkability_scores.length; i++) {
+            
+            div.innerHTML += labels.push(
+                '<i style="background:' + getCountyColor(walkability_scores[i]) + '"></i> ' +
+                // walkability_scores[i] + (walkability_scores[i + 1] ? '&ndash;' + walkability_scores[i + 1] + '<br>' : '+'));
+                categories[i] + '<br>');
+            }
+        div.innerHTML = labels.join('');
 
+        return div;
+    };
+
+    legend.addTo(myMap);
+});
 
 
 // Create function to define actions when each state feature is clicked
-function onEachState(feature,layer) {
-
-    // Wrap in function that calls our API for school/county data
-    async function addGeoJson() {
-        const response = await fetch("static/data/countygeo_jack.json");
-        const countiesData = await response.json();
+function onEachState(feature,layer) {  
 
     // Identify which state ID was just selected
     let selectedStateId = feature.properties.GEO_ID.slice(-2);
@@ -259,6 +268,7 @@ function onEachState(feature,layer) {
         // Set state highlight style on hover
         mouseover: e => {
             layer.setStyle(stateHighlightStyle);
+            console.log("Mouseover on each state");
         },
 
         // Reset state style when hover 
@@ -267,8 +277,9 @@ function onEachState(feature,layer) {
         },
 
         // Set state style when selected
-        click: e => {
-            let layer = e.target;
+        click: function(e) {
+            // let layer = e.target;
+            console.log(e.target._bounds);
             layer.setStyle(stateSelectedStyle);
 
             // Update panel title to state abbr.
@@ -280,7 +291,7 @@ function onEachState(feature,layer) {
             }
 
             // Zoom to fit state boundaries
-            myMap.fitBounds(layer.getBounds());
+            myMap.fitBounds(e.target._bounds);
 
             // Store current selection for later restyling
             prevLayerClicked = layer;
@@ -294,8 +305,8 @@ function onEachState(feature,layer) {
             }
         });
     }
-    addGeoJson();
-}
+    // addGeoJson();
+// }
 
 
 
@@ -328,14 +339,14 @@ function showSchoolMarkersCounty(state, county='') {
   
         // Make API call to get school count for selected county
         d3.json(url+countyCountQuery).then(data => {
-            console.log("DATA",data);
+
             // Store school count (total number of schools in county)
             let schoolCount = data.count;
+    
             // Initialize number of schools left to check
             let schoolsRemaining = schoolCount;
             
-            // Update panel-body with school count for selected county
-            console.log("COUNTY DATA",data);
+            
 
             // Looop until no schools left to check
             while (schoolsRemaining > 0) {
@@ -343,8 +354,11 @@ function showSchoolMarkersCounty(state, county='') {
                 // Reset query with updated offset count
                 d3.json(url+stateQueryOffset).then(response => {
                     let selectedCountyName = `${response.features[0].attributes.NMCNTY}`;
-                    // console.log("COUNTY WHILE", selectedCountyName);
+                    
+                    // Update panel-body with school count for selected county
                     d3.select("#county-school-count").text(`${schoolCount} schools in ${selectedCountyName}`);
+                    // d3.select("#walkability-score").text()
+
                     // Create/display marker cluster layer of schools for selected state
                     addMarkers(response);
                 });
@@ -409,7 +423,6 @@ function showSchoolMarkersCounty(state, county='') {
 // Display county choropleth when state is clicked
 function showCounties(selectedStateCounties) {
 
-    // console.log("ShowCounties", selectedStateCounties);
     let selectedStateId = selectedStateCounties[0].properties.STATE;
     let selectedState = stateDict[selectedStateId];
 
@@ -423,7 +436,6 @@ function showCounties(selectedStateCounties) {
                     let layer = e.target;
                     layer.setStyle(countyHighlightStyle(feature.properties.walkability_score));
                     layer.bringToFront();
-                    console.log(feature.properties.walkability_score);
                 },
                 mouseout: e => {
                     let layer = e.target;
@@ -436,11 +448,8 @@ function showCounties(selectedStateCounties) {
                 },
                 click: e => {
                     // Get selected county name
-                    console.log("FEATURE",feature);
-                    // let selectedCounty = `${feature.properties.NAME}`;
                     let selectedCountyId = `${feature.properties.STATE}${feature.properties.COUNTY}`;
-                    console.log(selectedCountyId);
-                    // layer.setStyle(style);
+           
                     // Adjust selected county style
                     let layer = e.target;
                     layer.setStyle(countySelectedStyle(feature.properties.walkability_score));
@@ -450,15 +459,13 @@ function showCounties(selectedStateCounties) {
 
                     // Create and display marker clusters for schools within selected county
                     showSchoolMarkersCounty(selectedState, selectedCountyId);
-                    // showSchoolMarkersCounty(selectedState, selectedCountyId);
-                    // showSchoolMarkers(selectedState, selectedCounty);
 
                     // Reset the state layer to default
-                    stateLayer.setStyle(stateStyle);
+                    // stateLayer.setStyle(stateStyle);
 
                     // Check if a county was selected before and reset its style
                     if (prevLayerClicked !== null) {
-                        prevLayerClicked.setStyle(countyStyle(prevWalkInd));
+                        // prevLayerClicked.setStyle(countyStyle(prevWalkInd));
                     }
 
                     layer.bringToFront();
@@ -470,7 +477,8 @@ function showCounties(selectedStateCounties) {
                     prevLayerClicked = layer;
                     prevWalkInd = feature.properties.walkability_score
                 }
-            }).bindPopup(`${feature.properties.NAME}`);
+            }).bindPopup(`${feature.properties.NAME} ${feature.properties.LSAD}`);
+            console.log(feature.properties);
         }
   });
 
@@ -511,7 +519,7 @@ function addMarkers(data) {
     data.features.forEach(element => {
       // console.log(`${element.attributes.SCH_NAME}, ${element.attributes.LCITY}, ${element.attributes.LSTATE}`)
       // Add each location as individual marker with popup info
-      
+
         schoolMarker = L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
                         .on({
                         mouseover: e => {
@@ -519,12 +527,8 @@ function addMarkers(data) {
                         },
                         mouseout: e => 
                             e.target.setIcon(schoolIcon)
-                        }).bindPopup(`<h5>${element.attributes.SCH_NAME}</h5><hr>
-                                    <h6>${element.attributes.LCITY}, ${element.attributes.LSTATE}</h6>
-                                    <p>Level: ${element.attributes.SCHOOL_LEVEL}<br>
-                                    Student Population: ${element.attributes.TOTAL}<br>
-                                    Total Free/Reduced Lunch: ${element.attributes.TOTFRL}<br>
-                                    % Free/Reduced Lunch: ${((element.attributes.TOTFRL/element.attributes.TOTAL)*100).toFixed(2)}%</p>`
+                        }).bindPopup(`<h7>${element.attributes.NAME}</h7><hr>
+                                    <p>${element.attributes.CITY}, ${element.attributes.STATE}</p>`
                         )
         markers.addLayer(schoolMarker);
 
@@ -532,7 +536,7 @@ function addMarkers(data) {
         schoolLocations.push([element.geometry.y, element.geometry.x]);
     }); // End ForEach
 
-    // console.log("AddMARKERS FUNCTION:", markers);
+
     markers.addTo(myMap);
 }
 
