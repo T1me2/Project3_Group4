@@ -21,7 +21,7 @@ html {
   border-width: 5px;
   margin-bottom: 20px;
   height: 230px;
-  width: 300px;
+  width: inherit;
   /* margin: 10px; */
   padding: 5px;
 }
@@ -43,12 +43,15 @@ html {
   margin-bottom: 30px;
 }
 
+#map-frame {
+  height: inherit;
+  width: inherit;
+}
+
 #map-frame, 
 #scatter-frame, 
 #bar-frame {
   position: relative;
-  height: inherit;
-  width: inherit;
   border-style: solid;
   border-color: gray;
   border-width: 5px;

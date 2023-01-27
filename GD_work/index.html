@@ -14,8 +14,8 @@
     <!-- D3 library -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
 
-    <!-- JQuery Library -->
-    <!-- <script src="jquery-3.6.1.min.js"></script> -->
+    <!-- Charts.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
     <!-- Marker cluster JavaScript code -->
     <script type="text/javascript" src="https://unpkg.com/leaflet.markercluster@1.0.3/dist/leaflet.markercluster.js"></script>
@@ -40,12 +40,12 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12 jumbotron jumbotron text-center mt-4 pt-1 bg-secondary text-white rounded">
-          <h1>Walkability and School Density</h1>
-          <p>Use the interactive charts below to explore the dataset.</p>
+          <h1>Walkability and School Density in the U.S.</h1>
+          <p>Select a state on the map to get started.</p>
         </div>
       </div>
       <div class="row metadata-row">
-        <div class="col-md-8 col-sm-12">
+        <div class="col-md-6 col-sm-12">
           <div class="panel panel-primary">
             <div class="panel-heading">
               <h5 class="panel-title">Select a state to begin.</h5>
@@ -58,7 +58,7 @@
               <p id="total-pop"> </p>
             </div>
           </div>
-          <div class="col-md-8 col-sm-12">
+          <div class="col-md-12">
             <div id="map-container-fluid">
               <div id="map-frame">
                 <div id="map"></div>
@@ -75,6 +75,7 @@
           <div class="scatter-frame">
             <div id="scatter">
               <h1>CHART HERE</h1>
+              <canvas id="acquisitions"></canvas>
             </div>
           </div>
         </div>
@@ -91,11 +92,14 @@
     <!-- Leaflet heatmap plugin-->
     <script type="text/javascript" src="static/js/leaflet-heat.js"></script>
 
-    <!-- Counties GeoJSON-->
-    <!-- <script type="text/javascript" src="static/data/counties-data.js"></script>  -->
+    <!-- Acquisitions-->
+    <!-- <script type="module" src="src/acquisitions.js"></script> -->
 
     <!-- States GeoJSON-->
     <script type="text/javascript" src="static/data/states-data.js"></script> 
+
+    <!-- County geojson LOCAL-->
+    <script type="text/javascript" src="static/data/counties-data.js"></script>
 
     <!-- JavaScript file -->
     <!-- <script type="text/javascript" src="static/js/logic.js"></script> -->

@@ -1,4 +1,5 @@
 // Initialize global variables
+// let countiesData = countiesDataLocal;
 let countiesData;
 let stateLayer;
 let myMap;
@@ -184,10 +185,11 @@ function getCountyColor(walkInd) {
 ///// Initialize Map
 
 // D3 to call our API for school/county data
-d3.json(walkabilityUrl).then(results => {
+d3.json(walkabilityUrl).then(results => { // UNCOMMENT FOR NON-LOCAL CALL
 
     // Store results in global countiesData
     countiesData = results;
+    // countiesData = countiesDataLocal;
 
     // State Layer from statesData geoJSON variable (state boundaries)
     stateLayer = L.geoJson(statesData, {
@@ -245,7 +247,8 @@ d3.json(walkabilityUrl).then(results => {
     };
 
     legend.addTo(myMap);
-});
+}); 
+//UNCOMMENT FOR NON-LOCAL CALL
 
 
 // Create function to define actions when each state feature is clicked
@@ -280,6 +283,7 @@ function onEachState(feature,layer) {
         click: e => {
             // let layer = e.target;
             d3.select("#scatter").text(`${selectedStateAbb} Scatter`);
+
             d3.select("#bar").text(`${selectedStateAbb} Histogram`);
 
             layer.setStyle(stateSelectedStyle);
@@ -305,7 +309,7 @@ function onEachState(feature,layer) {
                 // showSchoolMarkers(selectedStateAbb);
 
             // PLOT HERE
-            // plot(stateIDe)
+            updateChartjs(selectedStateAbb);
             }
         });
     }
@@ -612,3 +616,50 @@ function showSchoolMarkers(state, county='') {
         schoolsRemaining -= 2000;
     }
 }
+
+
+
+
+
+// const stateid = "03"
+let county_dict;
+let counties_list;
+
+function updateChartjs (stateid) {
+    //initialize list to fill with data points
+    counties_list = []
+    
+    //loop through selected state to get data points for each county based on walkability score and total population
+    let statedata = countiesData.filter(obj => obj.properties.STATE == stateid); 
+    for (var i = 0; i < statedata.length; i++) {
+        counties_list.push({
+            x: statedata[i].properties.population,
+            y: statedata[i].properties.walkability_score
+            });
+    }
+    console.log(counties_list)
+
+    new Chart(
+        document.getElementById('acquisitions'),
+        {
+        type: "scatter",
+        data: {
+          datasets: [{
+            pointRadius: 4,
+            pointBackgroundColor: "rgba(0,0,255,1)",
+            data: counties_list
+          }]
+        },
+        // options:{...}
+      });
+
+}
+
+//initialize function to update state based on optionchange
+
+function optionChanged(selection) {
+    updateChartjs(selection)
+}
+
+
+
