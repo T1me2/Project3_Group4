@@ -304,7 +304,7 @@ function onEachState(feature,layer) {
                 // showSchoolMarkers(selectedStateAbb);
 
             // PLOT HERE
-
+            // plot(stateIDe)
             }
         });
     }
