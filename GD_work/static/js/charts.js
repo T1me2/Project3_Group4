@@ -144,7 +144,11 @@ function updateHistojs (stateData) {
                 }],
                 yAxes: [{
                   ticks: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                  },
+                  scaleLabel: {
+                    display: true,
+                    labelString: "# of Counties"
                   }
                 }]
               }
