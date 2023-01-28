@@ -25,12 +25,12 @@ function updateChartjs (stateData) {
           datasets: [{
             pointRadius: 4,
             pointBackgroundColor: "#f768a1",
-            data: counties_list,
-            trendlineLinear: {
-              style: "gray",
-              lineStyle: "dotted|solid",
-              width: 4
-            }
+            data: counties_list
+            // trendlineLinear: {
+            //   style: "gray",
+            //   lineStyle: "dotted|solid",
+            //   width: 4
+            // }
           }]
         },
         options: {
@@ -110,7 +110,7 @@ function updateHistojs (stateData) {
 
         };
 
-        console.log(walkability_list)
+        console.log("WALKABILITY_LIST",walkability_list)
 
         const chart = new Chart(ctx, {
             type: 'bar',

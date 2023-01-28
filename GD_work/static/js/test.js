@@ -328,7 +328,6 @@ function onEachState(feature,layer) {
                 // showSchoolMarkers(selectedStateAbb);
 
             // PLOT HERE
-            console.log("selectedStateCounties", selectedStateCounties);
             updateChartjs(selectedStateCounties);
             updateHistojs(selectedStateCounties);
             }
@@ -565,7 +564,6 @@ function addMarkers(data) {
                                     <text>${element.attributes.CITY}, ${element.attributes.STATE}</text>`
                         );
         markers.addLayer(schoolMarker);
-        console.log("element", element.attributes);
 
         // Add coordinates to schoolLocations for heat map                
         schoolLocations.push([element.geometry.y, element.geometry.x]);
