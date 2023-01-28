@@ -6,6 +6,7 @@ import json
 import pandas as pd
 from pymongo import MongoClient
 # test
+# PYTHONDONTWRITEBYTECODE=1
 
 #create app
 app = Flask(__name__)
@@ -34,6 +35,8 @@ def group_data():
         result_list.append(result)
     real_list = {"type": "FeatureCollection", "features": result_list}
     return real_list
+    
+    
 
     
     
