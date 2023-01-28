@@ -310,6 +310,7 @@ function onEachState(feature,layer) {
             // PLOT HERE
             console.log("selectedStateCounties", selectedStateCounties);
             updateChartjs(selectedStateCounties);
+            updateHistojs(selectedStateCounties);
             }
         });
     }
@@ -620,64 +621,6 @@ function showSchoolMarkers(state, county='') {
 
 
 
-function updateChartjs (stateData) {
-    //initialize list to fill with data points
-    counties_list = [];
-    let county_labels = [];
-    let stateAbbr = stateData[0].properties.STATE;
-
-    //loop through selected state to get data points for each county based on walkability score and total population
-    // let statedata = countiesData.filter(obj => obj.properties.STATE == stateid); 
-    for (let i = 0; i < stateData.length; i++) {
-        counties_list.push({
-            x: stateData[i].properties.student_pop / stateData[i].properties.population,
-            y: stateData[i].properties.walkability_score
-            });
-        county_labels.push(`${stateData[i].properties.NAME} ${stateData[i].properties.LSAD}`)
-    }
-    console.log("COUNTIESLIST",counties_list);
-
-    new Chart(
-        document.getElementById('scatter-plot'),
-        {
-        type: "scatter",
-        data: {
-          datasets: [{
-            pointRadius: 4,
-            pointBackgroundColor: "#f768a1",
-            data: counties_list
-          }]
-        },
-        options: {
-            // tooltips: {
-            //     callbacks: {
-            //         label: county_labels
-            //     }
-            // },
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Student population vs. Walkability Index by County'
-                }
-            },
-            scales: {
-                xAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: "# Students per Capita"
-                    }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: "Walkability Index"
-                    }
-                }]
-            }
-        }
-      });
-
-}
 
 
 
