@@ -26,16 +26,26 @@ html {
 
 .panel {
   margin-bottom: 20px;
-  padding: 5px;
+  /* padding: 5px; */
 }
 
 .panel-heading {
   background-color:rgb(202, 199, 199);
   text-align:center;
+  border-bottom-style: solid;
+}
+
+.panel-body {
+  padding: 7px;
+}
+
+.panel-title {
+  font-size:24px;
 }
 
 .jumbotron {
   margin-bottom: 20px;
+  padding: 10px;
 }
 
 #map-container-fluid {
@@ -43,6 +53,8 @@ html {
   height: 500px;
   width: 100%;
   margin-bottom: 30px;
+  border-bottom-color: gray;
+  border-bottom-width: 4px;
 }
 
 #map-frame, 
