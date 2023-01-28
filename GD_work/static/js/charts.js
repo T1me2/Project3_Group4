@@ -1,4 +1,5 @@
 
+let scatterPlot;
 
 function updateChartjs (stateData) {
     //initialize list to fill with data points
@@ -16,8 +17,10 @@ function updateChartjs (stateData) {
         county_labels.push(`${stateData[i].properties.NAME} ${stateData[i].properties.LSAD}`)
     }
     console.log("COUNTIESLIST",counties_list);
-
-    new Chart(
+    if (scatterPlot) {
+      scatterPlot.destroy();
+    }
+    scatterPlot = new Chart(
         document.getElementById('scatter-plot'),
         {
         type: "scatter",
