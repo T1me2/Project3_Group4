@@ -37,7 +37,7 @@ html {
 
 #map-container-fluid {
   position: relative;
-  height: 400px;
+  height: 500px;
   width: 100%;
   /* margin-top: 50px; */
   margin-bottom: 30px;
@@ -55,7 +55,6 @@ html {
   border-style: solid;
   border-color: gray;
   border-width: 5px;
-  margin: 0px;
 }
 
 #map {
@@ -66,10 +65,11 @@ html {
 
 .legend {
   line-height: 18px;
-  color: #555;
+  color: gray;
   padding: 4px;
   opacity: 0.8;
   background-color:white;
+  border-style: solid;
 }
 
 .legend i {
@@ -110,7 +110,10 @@ html {
   margin: 10px;
 } */
 
-#scatter-plot, #bar {
+#scatter-plot, #histogram {
   height: inherit;
-  width: inherit
+  width: inherit;
+  margin-bottom: 50px; 
+  margin-top: 20px;
 }
+
