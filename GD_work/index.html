@@ -37,48 +37,48 @@
 
   <body>
 
-    <div class="container">
+    <div class="container">STOP
       <div class="row">
         <div class="col-md-12 jumbotron jumbotron text-center mt-4 pt-1 bg-secondary text-white rounded">
           <h1>Walkability and School Density in the U.S.</h1>
           <p>Select a state on the map to get started.</p>
         </div>
       </div>
+
       <div class="row metadata-row">
-        <div class="col-md-6 col-sm-12">
-          <div class="panel panel-primary">
-            <div class="panel-heading">
-              <h5 class="panel-title">Select a state to begin.</h5>
+        <div class="map-data-section col-md-7 h-100 align-items-center justify-content-center">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h5 class="panel-title">Select a state to begin.</h5>
+              </div>
+              <div id="sample-metadata" class="panel-body">
+                <p id="state-school-count"></p>
+                <p id="county-school-count"></p>
+                <p id="walkability-score"> </p>
+                <p id="student-pop"> </p>
+                <p id="total-pop"> </p>
+              </div>
             </div>
-            <div id="sample-metadata" class="panel-body">
-              <p id="state-school-count"></p>
-              <p id="county-school-count"></p>
-              <p id="walkability-score"> </p>
-              <p id="student-pop"> </p>
-              <p id="total-pop"> </p>
-            </div>
-          </div>
-          <div class="col-md-12">
             <div id="map-container-fluid">
               <div id="map-frame">
                 <div id="map"></div>
               </div>
             </div>
-          </div>
         </div>
-        <div class="col-md-6 col-sm-12">
-          <div class="bar-frame">
-            <canvas id="histogram"></canvas>
-          </div>
-          <div>
-          </div>
-          <div class="scatter-frame">
-            <canvas id="scatter-plot"></canvas>
-          </div>
+
+        <div class="chart-container col-md-5">
+            <div class="bar-frame">
+              <canvas id="histogram"></canvas>
+            </div>
+            <div>
+            </div>
+            <div class="scatter-frame">
+              <canvas id="scatter-plot"></canvas>
+            </div>
         </div>
       </div>
 
-    
+    </div>
 
     <!-- Leaflet heatmap plugin-->
     <script type="text/javascript" src="static/js/leaflet-heat.js"></script>
@@ -94,6 +94,10 @@
 
     <!-- Charts JS File-->
     <script type="text/javascript" src="static/js/charts.js"></script>
+
+    <!-- Trendline Plugin-->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-trendline@2.0.0/src/chartjs-plugin-trendline.min.js"></script>
+    
     <!-- JavaScript file -->
     <!-- <script type="text/javascript" src="static/js/logic.js"></script> -->
     <script type="text/javascript" src="static/js/test.js"></script>

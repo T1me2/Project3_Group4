@@ -8,6 +8,15 @@ p {
   font-size: 14px;
 }
 
+p {
+  color: gray;
+}
+
+h5 {
+  color:white;
+  padding: 3px;
+}
+
 #map,
 body,
 html {
@@ -16,19 +25,13 @@ html {
 }
 
 .panel {
-  border-style: solid;
-  border-color: gray;
-  border-width: 5px;
   margin-bottom: 20px;
-  height: inherit;
-  width: inherit;
-  /* margin: 10px; */
   padding: 5px;
 }
 
-.metadata-row {
-  height: 100%;
-  width: 100%;
+.panel-heading {
+  background-color:rgb(202, 199, 199);
+  text-align:center;
 }
 
 .jumbotron {
@@ -39,22 +42,18 @@ html {
   position: relative;
   height: 500px;
   width: 100%;
-  /* margin-top: 50px; */
   margin-bottom: 30px;
-}
-
-#map-frame {
-  height: inherit;
-  width: inherit;
 }
 
 #map-frame, 
 #scatter-frame, 
-#bar-frame {
+#bar-frame, .panel {
+  height: inherit;
+  width: inherit;
   position: relative;
   border-style: solid;
   border-color: gray;
-  border-width: 5px;
+  border-width: 4px;
 }
 
 #map {
@@ -77,7 +76,6 @@ html {
   height: 18px;
   float: left;
   margin-right: 8px;
-  /* opacity: .7; */
 }
 
 .marker-cluster-small {
@@ -99,21 +97,19 @@ html {
   background-color: rgba(241, 128, 23, 0.6);
 }
 
-
 /* #scatter-frame, #bar-frame {
   position: relative;
-  height: 100%;
-  width: 100%;
+  height: 400px;
+  width: 300px;
   border-style: solid;
   border-color: gray;
   border-width: 5px;
   margin: 10px;
 } */
 
-#scatter-plot, #histogram {
-  height: inherit;
-  width: inherit;
-  margin-bottom: 50px; 
-  margin-top: 20px;
-}
 
+/* .chart-container { */
+  /* height: 800px; */
+  /* width: inherit; */
+  /* float:right; */
+/* } */

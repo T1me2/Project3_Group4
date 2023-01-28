@@ -225,7 +225,8 @@ function getCountyColor(walkInd) {
     myMap = L.map("map", {
         center: [40.2659, -96.7467],
         zoom: 3,
-        layers: [cyclosm, stateLayer]
+        layers: [cyclosm, stateLayer],
+        scrollWheelZoom: false
         });
 
     // Create layer group to store county boundary layers 
@@ -551,6 +552,8 @@ function addMarkers(data) {
     // Create school marker clusters for each state/county feature
     data.features.forEach(element => {
       // Add each location as individual marker with popup info
+      
+
         schoolMarker = L.marker([element.geometry.y, element.geometry.x], {icon:schoolIcon})
                         .on({
                         mouseover: e => {
@@ -560,8 +563,9 @@ function addMarkers(data) {
                             e.target.setIcon(schoolIcon)
                         }).bindPopup(`<h6>${element.attributes.NAME}</h6><hr>
                                     <text>${element.attributes.CITY}, ${element.attributes.STATE}</text>`
-                        )
+                        );
         markers.addLayer(schoolMarker);
+        console.log("element", element.attributes);
 
         // Add coordinates to schoolLocations for heat map                
         schoolLocations.push([element.geometry.y, element.geometry.x]);

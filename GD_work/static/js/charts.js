@@ -25,7 +25,12 @@ function updateChartjs (stateData) {
           datasets: [{
             pointRadius: 4,
             pointBackgroundColor: "#f768a1",
-            data: counties_list
+            data: counties_list,
+            trendlineLinear: {
+              style: "gray",
+              lineStyle: "dotted|solid",
+              width: 4
+            }
           }]
         },
         options: {
