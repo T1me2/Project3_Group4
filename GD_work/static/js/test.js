@@ -139,6 +139,17 @@ return {
 };
 }
 
+function staticCountyStyle(feature) {
+    return {
+        fillColor: getCountyColor(feature.properties.walkability_score),
+        weight: 10,
+        opacity: .9,
+        color: 'gray',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+    }
+
 // Reset style for county choropleth
 function countyStyle(walkInd) {
 return {
@@ -182,7 +193,6 @@ function getCountyColor(walkInd) {
                                 '#feebe2' ;
 }
 
-
 ///// Initialize Map
 
 // D3 to call our API for school/county data
@@ -191,6 +201,8 @@ function getCountyColor(walkInd) {
     // Store results in global countiesData
     // countiesData = results;
     countiesData = countiesDataLocal;
+    countyStatic = L.geoJson(countiesData, {
+        style: style});
 
     // State Layer from statesData geoJSON variable (state boundaries)
     stateLayer = L.geoJson(statesData, {
@@ -205,7 +217,8 @@ function getCountyColor(walkInd) {
     }
 
     let overlayMaps = {
-        States: stateLayer
+        States: stateLayer,
+        "All Counties": countyStatic
     }
 
     // Create the map object
@@ -248,7 +261,13 @@ function getCountyColor(walkInd) {
     };
 
     legend.addTo(myMap);
+
+
+
+
 // }); //UNCOMMENT FOR NON-LOCAL CALL
+
+
 
 
 // Create function to define actions when each state feature is clicked
@@ -500,9 +519,9 @@ function showCounties(selectedStateCounties) {
   countyLayer.addLayer(counties);
 
   // Remove any existing county layers
-  layerControl.removeLayer(countyLayer);
+//   layerControl.removeLayer(countyLayer);
   // Add county layer to layer control
-  layerControl.addOverlay(countyLayer, "Counties");
+//   layerControl.addOverlay(countyLayer, "Counties");
   // Add county layer to map
   myMap.addLayer(countyLayer);
 }
