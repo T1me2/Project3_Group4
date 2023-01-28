@@ -1,5 +1,6 @@
 
 let scatterPlot;
+let histogramPlot;
 
 function updateChartjs (stateData) {
     //initialize list to fill with data points
@@ -115,7 +116,8 @@ function updateHistojs (stateData) {
 
         console.log("WALKABILITY_LIST",walkability_list)
 
-        const chart = new Chart(ctx, {
+        if (histogramPlot) {histogramPlot.destroy();}
+        histogramPlot = new Chart(ctx, {
             type: 'bar',
             data: {
               labels: [0, 4, 6.5, 9, 13],
