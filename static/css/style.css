@@ -1,0 +1,127 @@
+
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+p {
+  font-size: 14px;
+}
+
+p {
+  color: gray;
+}
+
+h5 {
+  color:white;
+  padding: 3px;
+}
+
+#map,
+body,
+html {
+  height: 100%;
+  width: 100%
+}
+
+.panel {
+  margin-bottom: 20px;
+  /* padding: 5px; */
+}
+
+.panel-heading {
+  background-color:rgb(202, 199, 199);
+  text-align:center;
+  border-bottom-style: solid;
+}
+
+.panel-body {
+  padding: 7px;
+}
+
+.panel-title {
+  font-size:24px;
+}
+
+.jumbotron {
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+#map-container-fluid {
+  position: relative;
+  height: 500px;
+  width: 100%;
+  margin-bottom: 30px;
+  border-bottom-color: gray;
+  border-bottom-width: 4px;
+}
+
+#map-frame, 
+#scatter-frame, 
+#bar-frame, .panel {
+  height: inherit;
+  width: inherit;
+  position: relative;
+  border-style: solid;
+  border-color: gray;
+  border-width: 4px;
+}
+
+#map {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.legend {
+  line-height: 18px;
+  color: gray;
+  padding: 4px;
+  opacity: 0.8;
+  background-color:white;
+  border-style: solid;
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+}
+
+.marker-cluster-small {
+  background-color: rgba(181, 226, 140, 0.6);
+  }
+.marker-cluster-small div {
+  background-color: rgba(110, 204, 57, 0.6);
+}
+.marker-cluster-medium {
+  background-color: rgba(241, 211, 87, 0.6);
+}
+.marker-cluster-medium div {
+  background-color: rgba(240, 194, 12, 0.6);
+}
+.marker-cluster-large {
+  background-color: rgba(253, 156, 115, 0.6);
+}
+.marker-cluster-large div {
+  background-color: rgba(241, 128, 23, 0.6);
+}
+
+/* #scatter-frame, #bar-frame {
+  position: relative;
+  height: 400px;
+  width: 300px;
+  border-style: solid;
+  border-color: gray;
+  border-width: 5px;
+  margin: 10px;
+} */
+
+
+/* .chart-container { */
+  /* height: 800px; */
+  /* width: inherit; */
+  /* float:right; */
+/* } */
