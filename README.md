@@ -15,13 +15,19 @@ Below screenshot shows both states and counties with no state selected to begin
 ![This is an image](images/map-view-states-counties.png)
 
 
+The Walkability Score for Marion County in Florida. A total number of 65 schools are in Marion county with a walkability score of 7.35
 ![This is an image](images/marion-county-walkability.png)
 
+
+The scatter plot is measuring the walkability index vs the number of students per capita. 
 ![This is an image](images/chart1.png)
 
 
+Histogram plot
 ![This is an image](images/chart2.png)
 
+
+Below is a screnshot of the completed Project which shows the map, scatter plot and Histogram plot
 ![This is an image](images/mn-with-charts.png)
 
 
