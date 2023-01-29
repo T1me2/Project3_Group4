@@ -35,3 +35,10 @@ Below is a screnshot of the completed Project which shows the map, scatter plot 
 **Reference**
 [Chart.js](https://www.chartjs.org/), 
 [Walkability Index](https://catalog.data.gov/dataset/walkability-index)
+
+**Project Team Members** 
+Jack Miller,
+Nicholas Erdos-Thayer,
+Cherno Jallow,
+Glen Dagger
+
