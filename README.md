@@ -11,6 +11,7 @@ Open with live server via the index.Html will show the map where user can select
 ![This is an image](images/map-with-states.png)
 
 
+Below screenshot shows both states and counties with no state selected to begin
 ![This is an image](images/map-view-states-counties.png)
 
 
