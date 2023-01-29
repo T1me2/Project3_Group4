@@ -32,7 +32,7 @@ Below is a screnshot of the completed Project which shows the map, scatter plot 
 ![This is an image](images/mn-with-charts.png)
 
 
-**Reference**
+**Reference:**
 [Chart.js](https://www.chartjs.org/), 
 [Walkability Index](https://catalog.data.gov/dataset/walkability-index)
 
