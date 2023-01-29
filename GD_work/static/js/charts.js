@@ -11,11 +11,14 @@ function updateChartjs (stateData) {
     //loop through selected state to get data points for each county based on walkability score and total population
     // let statedata = countiesData.filter(obj => obj.properties.STATE == stateid); 
     for (let i = 0; i < stateData.length; i++) {
+      if ((stateData[i].properties.student_pop !==0) &&
+          (stateData[i].properties.population!==0)){
         counties_list.push({
             x: stateData[i].properties.student_pop / stateData[i].properties.population,
             y: stateData[i].properties.walkability_score
             });
         county_labels.push(`${stateData[i].properties.NAME} ${stateData[i].properties.LSAD}`)
+      }
     }
     console.log("COUNTIESLIST",counties_list);
     if (scatterPlot) {
@@ -51,6 +54,9 @@ function updateChartjs (stateData) {
             },
             scales: {
                 xAxes: [{
+                  ticks: {
+                    beginAtZero: true,
+                  },
                     scaleLabel: {
                         display: true,
                         labelString: "# Students per Capita"
@@ -93,21 +99,21 @@ function updateHistojs (stateData) {
     //loop through selected state to get data points for each county based on walkability score and total population
     for (var i = 0; i < stateData.length; i++) {
         if (stateData[i].properties.walkability_score < 4) {
-            zerotofour = zerotofour + 1;
+            zerotofour += 1;
 
         } else if (stateData[i].properties.walkability_score > 4 && 
             stateData[i].properties.walkability_score < 6.5) {
-            fourtosix = fourtosix + 1;
+            fourtosix += 1;
 
         } else if (stateData[i].properties.walkability_score > 6.5 &&
             stateData[i].properties.walkability_score < 9) {
-            sixtonine = sixtonine + 1;
+            sixtonine += 1;
 
         } else if (stateData[i].properties.walkability_score > 9 &&
             stateData[i].properties.walkability_score < 13) {
-            nineto13 = nineto13 + 1;  
+            nineto13 += 1;  
         
-        } else (greaterthan13 = greaterthan13 + 1);
+        } else (greaterthan13 += 1);
 
         walkability_list = [zerotofour, fourtosix, sixtonine, nineto13, greaterthan13]
         
