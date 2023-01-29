@@ -24,6 +24,7 @@ The scatter plot is measuring the walkability index vs the number of students pe
 
 
 Histogram plot
+
 ![This is an image](images/chart2.png)
 
 
