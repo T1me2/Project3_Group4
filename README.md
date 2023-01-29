@@ -10,11 +10,18 @@ The Walkability Index dataset characterizes every Census 2019 block group in the
 ![This is an image](images/map-view-states-counties.png)
 
 
+![This is an image](images/map-view-states-counties.png)
+
+
 ![This is an image](images/mn-with-charts.png)
 
 
+![This is an image](images/chart1.png)
+
+
+![This is an image](images/chart2.png)
 
 
 **Reference**
-[Chart.js](https://www.chartjs.org/)
+[Chart.js](https://www.chartjs.org/), 
 [Walkability Index](https://catalog.data.gov/dataset/walkability-index)
