@@ -9,9 +9,9 @@ The Walkability Index dataset characterizes every Census 2019 block group in the
 
 
 **Solution Approach**
-The following data sets, tools, programming languages and libraries were used for this project 
+- The following data sets, tools, programming languages and libraries were used for this project 
 
-*Data: Walkability Index and  public school info from catalog.data.gov, state and county Geojson
+1. Data: Walkability Index and  public school info from catalog.data.gov, state and county Geojson
 *Cleaned data was inserted into to properties of county geojson and inserted into Mongo Atlas
 *Flask app was used with render to make a call to the Mongo Atlas DB, allowing access to our custom Geojson for API calls.
 *Used HTML with bootstrap, CSS,  and JavaScript
