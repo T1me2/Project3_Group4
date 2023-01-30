@@ -12,12 +12,12 @@ The Walkability Index dataset characterizes every Census 2019 block group in the
 - The following data sets, tools, programming languages and libraries were used for this project 
 
 1. Data: Walkability Index and  public school info from catalog.data.gov, state and county Geojson
-*Cleaned data was inserted into to properties of county geojson and inserted into Mongo Atlas
-*Flask app was used with render to make a call to the Mongo Atlas DB, allowing access to our custom Geojson for API calls.
-*Used HTML with bootstrap, CSS,  and JavaScript
-*Leaflet to create a map that plots all the Walkability Index from your dataset based on their longitude and latitude.
-*Connects to geojson API using D3
-*Chart.js for the scatter plot and Plotly bar chart was used to create the histogram plot visualization
+2. Cleaned data was inserted into to properties of county geojson and inserted into Mongo Atlas
+3. Flask app was used with render to make a call to the Mongo Atlas DB, allowing access to our custom Geojson for API calls.
+4. Used HTML with bootstrap, CSS,  and JavaScript
+5. Leaflet to create a map that plots all the Walkability Index from your dataset based on their longitude and latitude.
+6. Connects to geojson API using D3
+7. Chart.js for the scatter plot and Plotly bar chart was used to create the histogram plot visualization
 
 
 Open with live server via the index.Html will show the map where user can select any state by simply clicking on the state
