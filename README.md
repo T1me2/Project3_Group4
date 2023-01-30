@@ -28,6 +28,7 @@ The Public School Locations dataset was used to display markers and marker clust
 
 ## Functionality
 
+The webpage is hosted on [GitHub Pages](https://t1me2.github.io/Project3_Group4/).
 Loading the webpage will show the interactive map with a legend, and prompt the user to begin by selecting a state. The code for all Javascript functionality is contained in the [logic.js](./static/js/logic.js) file, with functions for creating the scatter and bar visualizations contained in the [charts.js](./static/js/logic.js) file. Further information regarding the walkability index ranges is displayed in a box at the bottom of the page. The page is responsive to varying screen sizes, and at small sizes will display the panel, map, charts, and additional info in a single column.
 
 ![homepage](images/homepage.png)
