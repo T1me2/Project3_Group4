@@ -20,6 +20,7 @@ The Walkability Index dataset characterizes every Census 2019 block group in the
 7. Chart.js for the scatter plot and Plotly bar chart was used to create the histogram plot visualization
 
 
+
 Open with live server via the index.Html will show the map where user can select any state by simply clicking on the state
 ![This is an image](images/map-with-states.png)
 
