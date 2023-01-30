@@ -313,7 +313,7 @@ function showCounties(selectedStateCounties) {
                     // layer.bringToFront();
                     
                     // Zoom to fit county boundaries
-                    myMap.fitBounds(layer.getBounds());
+                    myMap.fitBounds(layer.getBounds(), false);
 
                     prevLayerClicked = layer;
                     prevWalkInd = feature.properties.walkability_score;
@@ -386,7 +386,7 @@ function showSchoolMarkers(state, county='') {
     // Set default for current length of api return call (can only do 2000 at a time)
     let offsetCount = 0;
 
-  
+
     // Check if county was selected and format additional query parameter to filter data
     if (county !== '') {
         countyParameter = `%20AND%20CNTY%20%3D%20'${county}'`;
@@ -474,7 +474,7 @@ function updatePanelInfo (feature, stateOnly) {
 
         // Use D3 to add info to panel-body element
         d3.select("#walkability-score").text(`Avg Walkability Index: ${walkabilityIndex}`)
-        d3.select("#total-pop").text(`Total County Population: ${totalPop}`);
+        d3.select("#total-pop").text(`Total County Population (Census 2019): ${totalPop}`);
         d3.select("#student-pop").text(`Total Student Population: ${studentPop} (${percentStud}%)`);
     }
 }
