@@ -93,7 +93,8 @@ let stateNames = {
 }
 
 // Define endpoints for walkability score ranges (for county choropleth coloring and legend)
-let walkability_scores = [0, 4, 6.5, 9, 13];
+// let walkability_scores = [0, 4, 6.5, 9, 13];
+let walkability_scores = [0, 5, 5.8, 6.8, 12];
 
 
 // Create CyclOSM tile baselayer
@@ -487,10 +488,11 @@ function updatePanelInfo (feature, stateOnly) {
 
 
 // D3 to call our API for school/county data
-d3.json(walkabilityUrl).then(results => {
+// d3.json(walkabilityUrl).then(results => {
 
     // Store results in global countiesData
-    countiesData = results;
+    // countiesData = results;
+    countiesData = countiesDataLocal; // uncomment to retrieve data locally
 
     // Create static county layer
     countyStatic = L.geoJson(countiesData, {
@@ -537,4 +539,4 @@ d3.json(walkabilityUrl).then(results => {
     // Add legend to map
     legend.addTo(myMap);
 
-});
+// });

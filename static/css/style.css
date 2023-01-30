@@ -25,7 +25,6 @@ html {
 
 .panel {
   margin-bottom: 20px;
-  /* padding: 5px; */
 }
 
 .panel-heading {
@@ -39,7 +38,7 @@ html {
 }
 
 .panel-title {
-  font-size:24px;
+  font-size:20px;
 }
 
 .jumbotron {
@@ -49,22 +48,31 @@ html {
 
 #map-container-fluid {
   position: relative;
-  height: 500px;
+  height: 450px;
   width: 100%;
   margin-bottom: 30px;
   border-bottom-color: gray;
   border-bottom-width: 4px;
 }
 
-#map-frame, 
-#scatter-frame, 
-#bar-frame, .panel {
+#map-frame,
+ .panel {
   height: inherit;
   width: inherit;
   position: relative;
   border-style: solid;
   border-color: gray;
   border-width: 4px;
+}
+
+.description {
+  margin-top: 10px;
+  border-style: solid;
+  border-color: gray;
+  border-width: 1px;
+  width:fit-content;
+  height:fit-content;
+  padding: 2px;
 }
 
 #map {
@@ -89,38 +97,6 @@ html {
   margin-right: 8px;
 }
 
-.marker-cluster-small {
-  background-color: rgba(181, 226, 140, 0.6);
-  }
-.marker-cluster-small div {
-  background-color: rgba(110, 204, 57, 0.6);
+#bar-chart, #scatter-plot {
+  margin-bottom: 50px;
 }
-.marker-cluster-medium {
-  background-color: rgba(241, 211, 87, 0.6);
-}
-.marker-cluster-medium div {
-  background-color: rgba(240, 194, 12, 0.6);
-}
-.marker-cluster-large {
-  background-color: rgba(253, 156, 115, 0.6);
-}
-.marker-cluster-large div {
-  background-color: rgba(241, 128, 23, 0.6);
-}
-
-/* #scatter-frame, #bar-frame {
-  position: relative;
-  height: 400px;
-  width: 300px;
-  border-style: solid;
-  border-color: gray;
-  border-width: 5px;
-  margin: 10px;
-} */
-
-
-/* .chart-container { */
-  /* height: 800px; */
-  /* width: inherit; */
-  /* float:right; */
-/* } */

@@ -1,8 +1,11 @@
+// Initialize chart variable
+let scatterPlot;
+// Initialize plot variable
+let barChart;
 
 // Define function to create scatter plot (students per capita vs. walkability) in 'scatter-plot' div when state selected
 function updateScatter (stateData) {
-  // Initialize chart variable
-  let scatterPlot;
+  
   // Initialize array to store x, y values for each point
   let counties_list = [];
   // Initialize array to store county colors based on walkability index
@@ -78,12 +81,9 @@ function updateScatter (stateData) {
 
 // Define function to create bar chart in 'bar-chart' div when new state selected
 function updateBar (stateData) {
-  //
-  const ctx = document.getElementById('bar-chart');
 
-  let walkability_list;
-  // Initialize plot variable
-  let barChart;
+  let walkabilityRanges = [0, 5, 5.8, 6.8, 12];
+
   // Initialize range counts for x-axis
   let leastWalkable = 0;
   let belowAverage = 0;
@@ -93,32 +93,32 @@ function updateBar (stateData) {
 
   //loop through selected state to get data points for each county based on walkability score and total population
   for (var i = 0; i < stateData.length; i++) {
-    if (stateData[i].properties.walkability_score < 4) {
+    if (stateData[i].properties.walkability_score < walkabilityRanges[1]) {
       leastWalkable += 1;
 
-    } else if (stateData[i].properties.walkability_score > 4 && 
-        stateData[i].properties.walkability_score < 6.5) {
+    } else if (stateData[i].properties.walkability_score > walkabilityRanges[1] && 
+        stateData[i].properties.walkability_score < walkabilityRanges[2]) {
           belowAverage += 1;
 
-    } else if (stateData[i].properties.walkability_score > 6.5 &&
-        stateData[i].properties.walkability_score < 9) {
+    } else if (stateData[i].properties.walkability_score > walkabilityRanges[2] &&
+        stateData[i].properties.walkability_score < walkabilityRanges[3]) {
           averageWalkability += 1;
 
-    } else if (stateData[i].properties.walkability_score > 9 &&
-        stateData[i].properties.walkability_score < 13) {
+    } else if (stateData[i].properties.walkability_score > walkabilityRanges[3] &&
+        stateData[i].properties.walkability_score < walkabilityRanges[4]) {
           aboveAverage += 1; 
     
     } else {mostWalkable += 1}
   }
-
-  walkability_list = [leastWalkable, belowAverage, averageWalkability, aboveAverage, mostWalkable];
+  // Define list of range bins for x-axis
+  let walkability_list = [leastWalkable, belowAverage, averageWalkability, aboveAverage, mostWalkable];
 
   // Clear any existing bar chart
   if (barChart) {
     barChart.destroy();
   }
-
-  barChart = new Chart(ctx, {
+  // Create new bar chart in 'bar-chart' div
+  barChart = new Chart(document.getElementById('bar-chart'), {
       type: 'bar',
       data: {
         labels: ['Least Walkable', 'Below Average', 'Average', 'Above Average', 'Most Walkable'],
