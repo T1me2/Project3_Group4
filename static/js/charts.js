@@ -72,7 +72,14 @@ function updateChartjs (stateData) {
                         labelString: "Walkability Index"
                     }
                 }]
-            }
+            },
+            tooltips: {
+              callbacks: {
+                  label: function(tooltipItem) {
+                      return (names_list[tooltipItem.index]);
+                  }
+              }
+          },
         }
       });
 
