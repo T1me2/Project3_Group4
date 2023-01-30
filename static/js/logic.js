@@ -286,6 +286,10 @@ function showCounties(selectedStateCounties) {
                     // layer.bringToFront();
                 },
                 click: e => {
+                    if (prevLayerClicked) {
+                        prevLayerClicked.setStyle(countyStyleReset(prevWalkInd));
+                    }
+
 
                     let layer = e.target;
 
@@ -298,10 +302,7 @@ function showCounties(selectedStateCounties) {
                     // Adjust selected county style
                     layer.setStyle(countySelectedStyle(feature.properties.walkability_score));
 
-                    if (prevLayerClicked) {
-                        prevLayerClicked.setStyle(countyStyleReset(prevWalkInd));
-                    }
-
+                    
                     // Update panel header with county/state name
                     updatePanelInfo(feature, false);
                     
