@@ -7,6 +7,19 @@ For this project we used the [Walkability Index](https://catalog.data.gov/datase
 
 The Walkability Index dataset characterizes every Census 2019 block group in the U.S. based on its relative walkability. Walkability depends upon characteristics of the built environment that influence the likelihood of walking being used as a mode of travel. The Walkability Index is based on the EPA's previous data product, the Smart Location Database (SLD)
 
+
+**Solution Approach**
+The following data sets, tools, programming languages and libraries were used for this project 
+
+*Data: Walkability Index and  public school info from catalog.data.gov, state and county Geojson
+*Cleaned data was inserted into to properties of county geojson and inserted into Mongo Atlas
+*Flask app was used with render to make a call to the Mongo Atlas DB, allowing access to our custom Geojson for API calls.
+*Used HTML with bootstrap, CSS,  and JavaScript
+*Leaflet to create a map that plots all the Walkability Index from your dataset based on their longitude and latitude.
+*Connects to geojson API using D3
+*Chart.js for the scatter plot and Plotly bar chart was used to create the histogram plot visualization
+
+
 Open with live server via the index.Html will show the map where user can select any state by simply clicking on the state
 ![This is an image](images/map-with-states.png)
 
