@@ -50,6 +50,9 @@ function updateChartjs (stateData) {
           }]
         },
         options: {
+            legend: {
+              display: false
+            },
             plugins: {
                 title: {
                     display: true,
