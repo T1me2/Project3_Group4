@@ -520,7 +520,7 @@ function updatePanelInfo (feature, stateOnly) {
     countyLayer = L.layerGroup();
 
     // Add layer control
-    layerControl = L.control.layers(baseMaps, overlayMaps, {
+    layerControl = L.control.layers(null, overlayMaps, {
         collapsed: false
     }).addTo(myMap);
 
