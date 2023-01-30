@@ -22,7 +22,7 @@ The Public School Locations dataset was used to display markers and marker clust
 4. Used HTML for framework of web page with CSS, Bootstrap, and JavaScript
 5. Javascipt file connects to GeoJSON API and Public School Locations API via D3 to pull data and dynamically create/add map overlays, update panel info, and update charts for visualizing the data
 6. Leaflet to create the interactive map to display state boundaries, zoom to fit selected state, create and add interactive county choropleth layer for selected state, and create/add marker clusters only within bounds of the selected state or county
-7. Chart.js library to create the scatter plot and Plotly libary for the bar chart visualizations
+7. Chart.js library to create the scatter plot and Plotly library for the bar chart visualizations
 
 <hr>
 
