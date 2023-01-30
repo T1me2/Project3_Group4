@@ -49,10 +49,15 @@ Below is a screnshot of the completed Project which shows the map, scatter plot 
 **Reference:**
 - [Chart.js](https://www.chartjs.org/), 
 - [Walkability Index](https://catalog.data.gov/dataset/walkability-index)
+- [Leaflet](https://leafletjs.com/examples/choropleth/)
+- [MongoBD](https://www.mongodb.com/)
+- [Bootstrap](https://getbootstrap.com/)
+- [JavaScript](https://htmlcheatsheet.com/js/)
+- D3/API(https://d3js.org/)
 
 **Project Team Members:** 
-* [Jack Miller](jmiller10@css.edu),
-* [Nicholas Erdos-Thayer](erdos.thayer@gmail.com),
-* [Cherno Jallow](cjallow@hotmail.com),
-* [Glen Dagger](glendagger@gmail.com)
+* Jack Miller: Email: jmiller10@css.edu
+* Nicholas Erdos-Thayer: Email: erdos.thayer@gmail.com
+* Cherno Jallow: Email: cjallow@hotmail.com
+* Glen Dagger: Email: glendagger@gmail.com
 
