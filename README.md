@@ -47,12 +47,12 @@ Below is a screnshot of the completed Project which shows the map, scatter plot 
 
 
 **Reference:**
-[Chart.js](https://www.chartjs.org/), 
-[Walkability Index](https://catalog.data.gov/dataset/walkability-index)
+- [Chart.js](https://www.chartjs.org/), 
+- [Walkability Index](https://catalog.data.gov/dataset/walkability-index)
 
 **Project Team Members:** 
-[Jack Miller](jmiller10@css.edu),
-[Nicholas Erdos-Thayer](erdos.thayer@gmail.com),
-[Cherno Jallow](cjallow@hotmail.com),
-[Glen Dagger](glendagger@gmail.com)
+* [Jack Miller](jmiller10@css.edu),
+* [Nicholas Erdos-Thayer](erdos.thayer@gmail.com),
+* [Cherno Jallow](cjallow@hotmail.com),
+* [Glen Dagger](glendagger@gmail.com)
 
