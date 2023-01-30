@@ -520,9 +520,9 @@ function updatePanelInfo (feature, stateOnly) {
     countyLayer = L.layerGroup();
 
     // Add layer control
-    layerControl = L.control.layers(null, overlayMaps, {
-        collapsed: false
-    }).addTo(myMap);
+    // layerControl = L.control.layers(null, overlayMaps, {
+    //     collapsed: false
+    // }).addTo(myMap);
 
     // Initialize the marker cluster group (will add markers in while loop)
     markers = L.markerClusterGroup();
