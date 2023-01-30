@@ -43,6 +43,7 @@ Histogram plot
 
 
 Below is a screnshot of the completed Project which shows the map, scatter plot and Histogram plot
+
 ![This is an image](images/mn-with-charts.png)
 
 
@@ -66,7 +67,7 @@ Below is a screnshot of the completed Project which shows the map, scatter plot 
 **Project Background**
 
 
-For this project we used the [Walkability Index](https://catalog.data.gov/dataset/walkability-index) data to map out all the counties and schools within a walkability range for every state within the United States.  The Goal was determine the number of schools within each county, the walkability score vs the students population for that county vs the total county population
+For this project we used the [Walkability Index](https://catalog.data.gov/dataset/walkability-index) data to map out all the counties and schools within a walkability range for every state within the United States.  The Goal was determine the number of schools within each county, the walkability score vs the students population for that county vs the total county population to see if there is any coorlation between schools and nearby walkability infustructure. 
 
 The Walkability Index dataset characterizes every Census 2019 block group in the U.S. based on its relative walkability. Walkability depends upon characteristics of the built environment that influence the likelihood of walking being used as a mode of travel. The Walkability Index is based on the EPA's previous data product, the Smart Location Database (SLD)
 
