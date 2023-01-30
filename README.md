@@ -59,13 +59,13 @@ The screenshot directly below shows the updated panel and map for Marion County 
 ![This is an image](images/marion-county-walkability.png)
 
 
-## Future Consideration
+## Future Considerations
 
 We initially set out to create a tool for identifying "problem areas" and displaying them on a map. Given more time, we would like to extend this project in the following ways:
 - Sort the data in our county API to identify most walkable and least walkable counties within each state.
 - Incorporate school density (schools per square mile or schools per capita) into our county API to more easily identify high density school areas.
 - Calculate the ratio for a county's school density divided by its average walkability index and use this to create a new choropleth map identifying areas with lower walkability and higher school counts or student populations.
-- 
+- Include more specific public school data to explore relationships between walkability and certain school characteristics, for example percent of students eligible for free/reduced lunch.
 
 
 **Reference:**
