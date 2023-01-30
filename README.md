@@ -47,13 +47,13 @@ Below is a screnshot of the completed Project which shows the map, scatter plot 
 
 
 **Reference:**
-- [Chart.js](https://www.chartjs.org/), 
+- [Chart.js](https://www.chartjs.org/)
 - [Walkability Index](https://catalog.data.gov/dataset/walkability-index)
 - [Leaflet](https://leafletjs.com/examples/choropleth/)
 - [MongoBD](https://www.mongodb.com/)
 - [Bootstrap](https://getbootstrap.com/)
 - [JavaScript](https://htmlcheatsheet.com/js/)
-- D3/API(https://d3js.org/)
+- [D3/API](https://d3js.org/)
 
 **Project Team Members:** 
 * Jack Miller: Email: jmiller10@css.edu
