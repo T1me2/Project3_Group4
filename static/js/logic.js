@@ -486,12 +486,16 @@ function updatePanelInfo (feature, stateOnly) {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////
+//////////// BEGIN FUNCTIONALITY /////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 
 // D3 to call our API for school/county data
 d3.json(walkabilityUrl).then(results => {
 
     // Store results in global countiesData
     countiesData = results;
+    countiesData = countiesDataLocal; // uncomment to retrieve data locally
 
     // Create static county layer
     countyStatic = L.geoJson(countiesData, {
