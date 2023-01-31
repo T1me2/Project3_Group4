@@ -488,11 +488,10 @@ function updatePanelInfo (feature, stateOnly) {
 
 
 // D3 to call our API for school/county data
-// d3.json(walkabilityUrl).then(results => {
+d3.json(walkabilityUrl).then(results => {
 
     // Store results in global countiesData
-    // countiesData = results;
-    countiesData = countiesDataLocal; // uncomment to retrieve data locally
+    countiesData = results;
 
     // Create static county layer
     countyStatic = L.geoJson(countiesData, {
@@ -539,4 +538,4 @@ function updatePanelInfo (feature, stateOnly) {
     // Add legend to map
     legend.addTo(myMap);
 
-// });
+});
