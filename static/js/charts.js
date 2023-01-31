@@ -16,7 +16,7 @@ function updateScatter (stateData) {
   // Loop through selected state to get walkability/students per capita, choropleth color, and name for each county, 
   for (let i = 0; i < stateData.length; i++) {
       counties_list.push({
-          x: stateData[i].properties.student_pop / stateData[i].properties.population,
+          x: (stateData[i].properties.student_pop / stateData[i].properties.population) * 100,
           y: stateData[i].properties.walkability_score
           });
       colors_list.push(getCountyColor(stateData[i].properties.walkability_score));
@@ -56,7 +56,7 @@ function updateScatter (stateData) {
             xAxes: [{
               scaleLabel: {
                 display: true,
-                labelString: "# Students per Capita"
+                labelString: "# Students per 100 residents"
               }
             }],
             // Set y-axis label
