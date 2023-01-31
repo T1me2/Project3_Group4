@@ -35,6 +35,7 @@ Loading the webpage will show the interactive map with a legend, and prompt the 
 
 <br>
 
+The base map is a tile from [CyclOSM](https://www.cyclosm.org/#map=12/52.3728/4.8936/cyclosm), which displays information including bicycle and highway infrastructure
 Hovering over a state will highlight it in a different color. When the user clicks on a state, the map zooms to fit the bounds of the selected state and creates a new marker cluster layer of all public school locations, as well as an interactive county choropleth layer that shows all counties in the state. The colors are divided into five ranges, named 'Least Walkable' (0-5), 'Below Average' (5-5.8), 'Average' (5.8-6.8), 'Above Average' (6.8-12), and 'Most Walkable' (12-20). These ranges were determined by first identifying the minimum score (3.45), maximum score (15.95), and median score (6.3). The 1st quartile is just over 5 and the 3rd quartile is around 8.2. Some ranges were slightly adjusted for better contrast in visuals.
 
 A scatter plot comparing walkability and student percent of the total population by county (for the selected state) is created and displayed on the webpage, as well as a bar chart showing the number of counties in each walkability range category. The color of the points corresponds to that county's walkability index, and hovering over points on the scatter plot displays the name of that particular county.
