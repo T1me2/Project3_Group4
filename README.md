@@ -32,13 +32,17 @@ Loading the webpage will show the interactive map with a legend, and prompt the 
 
 ![homepage](images/homepage.png)
 
-<br>
+<br>[0, 4.48, 5.56, 6.53, 9.10]
 
-Hovering over a state will highlight it in a different color. When the user clicks on a state, the map zooms to fit the bounds of the selected state and creates a new marker cluster layer of all public school locations, as well as an interactive county choropleth layer that shows all counties in the state. The colors are divided into five ranges, named 'Least Walkable' (0-5), 'Below Average' (5-5.8), 'Average' (5.8-6.8), 'Above Average' (6.8-12), and 'Most Walkable' (12-20). These ranges were determined by first identifying the minimum score (3.45), maximum score (15.95), and median score (6.3). The 1st quartile is just over 5 and the 3rd quartile is around 8.2. Some ranges were slightly adjusted for better contrast in visuals.
+Hovering over a state will highlight it in a different color. When the user clicks on a state, the map zooms to fit the bounds of the selected state and creates a new marker cluster layer of all public school locations, as well as an interactive county choropleth layer that shows all counties in the state. The colors are divided into five ranges, named 'Least Walkable' (0-4.48), 'Below Average' (4.48-5.56), 'Average' (5.56-6.53), 'Above Average' (6.53-9.10), and 'Most Walkable' (9.10-20). We decided to limit our map to 5 categories for ease of interpretation. The values were found using Pandas by grouping the walkability data by county/state, and using the describe() method to calculate the desired percentiles. We ultimately decided on the range values based on the following percentiles of U.S. counties: 'Lowest Walkability' (0-10%), 'Below Average': (10-35%), 'Average' (35-65%), 'Above Average' (65-90%), and 'Most Walkable': (90-100%). We chose these value so that out of all the ranges, the 'Average' category encompassed the greatest number of counties and the 'Least Walkable' and 'Most Walkable' counties encompassed only 10% each to make the extremes more visible. These could be amended easily in the future since the ranges were defined in a single variable within each of the logic.js and charts.js files.
+
+![walkabilityranges](images/walkability_ranges.png)
+
+<br>
 
 A scatter plot comparing walkability and student percent of the total population by county (for the selected state) is created and displayed on the webpage, as well as a bar chart showing the number of counties in each walkability range category. The color of the points corresponds to that county's walkability index, and hovering over points on the scatter plot displays the name of that particular county.
 
-The below screenshots display closeups of the plots for California, which seems to be one of the more walkable states.
+The below screenshots display closeups of the plots for California, which seems to be one of the more walkable states when looking on a county basis.
 
 ![scatter plot](images/scatter.png)
 
@@ -66,6 +70,8 @@ We initially set out to create a tool for identifying "problem areas" and displa
 - Incorporate school density (schools per square mile or schools per capita) into our county API to more easily identify high density school areas.
 - Calculate the ratio for a county's school density divided by its average walkability index and use this to create a new choropleth map identifying areas with lower walkability and higher school counts or student populations.
 - Include more specific public school data to explore relationships between walkability and certain school characteristics, for example percent of students eligible for free/reduced lunch.
+- Analyze the walkability data on the city level for more granular examination of the data, since our decision to generalize by county necessitated the loss of detail. This would avoid the issue we observed where the county's walkability can be heavily skewed by the presence of large cities.
+- Re-calculate the county walkability index, weighting the mean by relative geographic area of the census tracts.
 
 
 **Reference:**

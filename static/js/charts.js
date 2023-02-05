@@ -82,7 +82,7 @@ function updateScatter (stateData) {
 // Define function to create bar chart in 'bar-chart' div when new state selected
 function updateBar (stateData) {
 
-  let walkabilityRanges = [0, 5, 5.8, 6.8, 12];
+  let walkabilityRanges = [0, 4.48, 5.56, 6.53, 9.10];
 
   // Initialize range counts for x-axis
   let leastWalkable = 0;
