@@ -93,9 +93,7 @@ let stateNames = {
 }
 
 // Define endpoints for walkability score ranges (for county choropleth coloring and legend)
-// let walkability_scores = [0, 4, 6.5, 9, 13];
-let walkability_scores = [0, 5, 5.8, 6.8, 12];
-
+let walkability_scores = [0, 4.48, 5.56, 6.53, 9.10];
 
 // Create CyclOSM tile baselayer
 let cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
