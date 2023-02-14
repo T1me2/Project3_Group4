@@ -13,6 +13,7 @@ The Walkability Index dataset characterizes every Census 2019 block group in the
 The Public School Locations dataset was used to display markers and marker cluster groups for all public school locations in the United States on an interactive map.
 
 <hr>
+
 ## Solution Approach
 - The following data sets, tools, programming languages and libraries were used for this project: 
 
