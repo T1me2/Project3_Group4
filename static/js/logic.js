@@ -489,54 +489,55 @@ function updatePanelInfo (feature, stateOnly) {
 ////////////////////////////////////////////////////////////////////////////
 
 // D3 to call our API for school/county data
-d3.json(walkabilityUrl).then(results => {
+// d3.json(walkabilityUrl).then(results => {
 
-    // Store results in global countiesData
-    countiesData = results;
+// Store results in global countiesData
+// countiesData = results;
+countiesData = countiesDataLocal;
 
-    // Create static county layer
-    countyStatic = L.geoJson(countiesData, {
-        style: staticCountyStyle});
+// Create static county layer
+countyStatic = L.geoJson(countiesData, {
+    style: staticCountyStyle});
 
-    // State Layer from statesData geoJSON variable (state boundaries)
-    stateLayer = L.geoJson(statesData, {
-        // Set default state style
-        style: stateStyle,
-        // Call oneEachState function for each state (begins chain of interactive features)
-        onEachFeature: onEachState
+// State Layer from statesData geoJSON variable (state boundaries)
+stateLayer = L.geoJson(statesData, {
+    // Set default state style
+    style: stateStyle,
+    // Call oneEachState function for each state (begins chain of interactive features)
+    onEachFeature: onEachState
+});
+
+// Create the map object
+myMap = L.map("map", {
+    center: [40.2659, -96.7467],
+    zoom: 3,
+    // Set only base map layer and state layer to start
+    layers: [cyclosm, stateLayer],
+    scrollWheelZoom: false
     });
 
-    // Create the map object
-    myMap = L.map("map", {
-        center: [40.2659, -96.7467],
-        zoom: 3,
-        // Set only base map layer and state layer to start
-        layers: [cyclosm, stateLayer],
-        scrollWheelZoom: false
-        });
+// Create legend object
+legend = L.control({position: 'bottomright'});
 
-    // Create legend object
-    legend = L.control({position: 'bottomright'});
+// 
+legend.onAdd = function (myMap) {
+    
+    let div = L.DomUtil.create('div', 'info legend');
+    let categories = ['Least Walkable', 'Below Average', 'Average', 'Above Average', 'Most Walkable'];
+    let labels = ['<strong>Walkability Index</strong><br>'];
+    // Loop through our walkability intervals and generate a label with a colored square for each interval
+    for (let i = 0; i < walkability_scores.length; i++) {
+        // Add color icons for each range
+        div.innerHTML += labels.push(
+            '<i style="background:' + getCountyColor(walkability_scores[i]) + '"></i> ' +
+            categories[i] + '<br>');
+        }
+    div.innerHTML = labels.join('');
 
-    // 
-    legend.onAdd = function (myMap) {
-        
-        let div = L.DomUtil.create('div', 'info legend');
-        let categories = ['Least Walkable', 'Below Average', 'Average', 'Above Average', 'Most Walkable'];
-        let labels = ['<strong>Walkability Index</strong><br>'];
-        // Loop through our walkability intervals and generate a label with a colored square for each interval
-        for (let i = 0; i < walkability_scores.length; i++) {
-            // Add color icons for each range
-            div.innerHTML += labels.push(
-                '<i style="background:' + getCountyColor(walkability_scores[i]) + '"></i> ' +
-                categories[i] + '<br>');
-            }
-        div.innerHTML = labels.join('');
+    return div;
+};
 
-        return div;
-    };
+// Add legend to map
+legend.addTo(myMap);
 
-    // Add legend to map
-    legend.addTo(myMap);
-
-});
+// });
